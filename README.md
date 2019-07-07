@@ -1,31 +1,121 @@
-# Silk Library
+# Expression Evaluator
 
-[![NuGet version (SoftCircuits.Silk)](https://img.shields.io/nuget/v/SoftCircuits.Silk.svg?style=flat-square)](https://www.nuget.org/packages/SoftCircuits.Silk/)
+[![NuGet version (SoftCircuits.ExpressionEvaluator)](https://img.shields.io/nuget/v/SoftCircuits.ExpressionEvaluator.svg?style=flat-square)](https://www.nuget.org/packages/SoftCircuits.ExpressionEvaluator/)
 
 ```
-Install-Package SoftCircuits.Silk
+Install-Package SoftCircuits.ExpressionEvaluator
 ```
 
 ## Overview
 
-![Sample Program Screenshot](/docs/ScreenShot.png)
+Expression evaluator will evaluate a string that contains an expression and return the result of that expression. Expressions can include parentheses to control evaluation priorities and the currently supported operators are `+`, `-`, `*`, and `/`.
 
-The Simple Interpreted Language Kit (SILK) is a .NET class library that makes it easy to add scripting and automation to your .NET applications.
+In addition, expressions can contain symbols and functions, and functions arguments can be expressions that also include symbols and functions. When the evaluator encounters a symbol or function, it will raise the `ProcessSymbol` or `ProcessFunction` events.
 
-The library includes three main components. A compiler, a compiled program, and a runtime. The compiler compiles the Silk source code to bytecode. This allows faster execution and also catches all source code syntax errors before running the Silk program.
+## Examples
 
-The compiler produces a compiled program. A compiled program can be saved to a file, and later read from a file. This allows you to load and run a Silk program without recompiling it each time.
+This example evaluates simple expressions.
 
-Finally, the runtime component executes a compiled program.
+```cs
+double d;
+ExpressionEvaluator eval = new ExpressionEvaluator();
 
-The main power of this library is that it allows you to register your own functions and variables with the compiler and those functions and variables can be called from the Silk program. When one of your registered functions is called, the `Function` event is raised, allowing the host application to provide key functionality specific to the host application's domain.
+d = eval.Evaluate("2 + 2"));        // Returns 4
+d = eval.Evaluate("2 + 3 * 5"));    // Returns 17
+d = eval.Evaluate("(2 + 3) * 5"));  // Returns 25
+```
 
-The Silk language itself is designed to be relatively easy to learn. It has no semicolons or other excessive punctuation, and the language is not case sensitive.
+The next example evaluates an expression with symbols. The `ProcessSymbol` event handler defines three symbols, and sets the status to `SymbolStatus.UndefinedSymbol` if the symbol is not supported. Setting the status to `SymbolStatus.UndefinedSymbol` causes an `EvaluationException` exception to be thrown.
 
-This project includes both the class library (Silk), and a test project/solution (TestSilk). If you download everything and run it, it will run the TestSilk application. You just need the class library to include Silk in your own projects.
+```cs
+void Test()
+{
+    double d;
+    ExpressionEvaluator eval = new ExpressionEvaluator();
+    eval.ProcessSymbol += Eval_ProcessSymbol;
 
-## See Also:
-- [Using the Silk Library](docs/UsingLibrary.md)
-- [The Silk Language](docs/SilkLanguage.md)
-- [Internal Functions and Variables](docs/InternalFunctions.md)
-- [Sample Source Code](docs/Sample.md)
+    d = eval.Evaluate("two + two")); // Returns 4
+    d = eval.Evaluate("two + three * five"));   // Returns 17
+    d = eval.Evaluate("(two + three) * five")); // Returns 25
+}
+
+private void Eval_ProcessSymbol(object sender, SymbolEventArgs e)
+{
+    switch (e.Name)
+    {
+        case "two":
+            e.Result = 2;
+            break;
+        case "three":
+            e.Result = 3;
+            break;
+        case "five":
+            e.Result = 5;
+            break;
+        default:
+            e.Status = SymbolStatus.UndefinedSymbol;
+            break;
+    }
+}
+```
+
+The next examples employs both symbols and functions. Note that the `ProcessFunction` event handler defines two functions. It sets the status to `FunctionStatus.UndefinedFunction` if the function is not supported. In addition, it sets the status to `FunctionStatus.WrongParameterCount` if the number of arguments passed is not valid for the function. Setting the status to `FunctionStatus.UndefinedFunction` or `FunctionStatus.WrongParameterCount` causes an `EvaluationException` exception to be thrown.
+
+```cs
+void Test()
+{
+    double d;
+    ExpressionEvaluator eval = new ExpressionEvaluator();
+    eval.ProcessFunction += Eval_ProcessFunction;
+    eval.ProcessSymbol += Eval_ProcessSymbol;
+
+    d = eval.Evaluate("add(two, two)"));                    // Returns 4
+    d = eval.Evaluate("two + multiply(three, five)"));      // Returns 17
+    d = eval.Evaluate("multiply(add(two, three), five)"));  // Returns 25
+}
+
+private void Eval_ProcessSymbol(object sender, SymbolEventArgs e)
+{
+    switch (e.Name)
+    {
+        case "two":
+            e.Result = 2;
+            break;
+        case "three":
+            e.Result = 3;
+            break;
+        case "five":
+            e.Result = 5;
+            break;
+        default:
+            e.Status = SymbolStatus.UndefinedSymbol;
+            break;
+    }
+}
+
+private void Eval_ProcessFunction(object sender, FunctionEventArgs e)
+{
+    switch (e.Name)
+    {
+        case "add":
+            if (e.Parameters.Count == 2)
+                e.Result = e.Parameters[0] + e.Parameters[1];
+            else
+                e.Status = FunctionStatus.WrongParameterCount;
+            break;
+        case "multiply":
+            if (e.Parameters.Count == 2)
+                e.Result = e.Parameters[0] * e.Parameters[1];
+            else
+                e.Status = FunctionStatus.WrongParameterCount;
+            break;
+        default:
+            e.Status = FunctionStatus.UndefinedFunction;
+            break;
+    }
+}
+```
+
+## Additional Information
+
+For additional information, check the [A C# Expression Evaluator](http://www.blackbeltcoder.com/Articles/algorithms/a-c-expression-evaluator) article on Black Belt Coder.
