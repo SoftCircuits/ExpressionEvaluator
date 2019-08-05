@@ -17,8 +17,8 @@ In addition, expressions can contain symbols and functions, and functions argume
 This example evaluates simple expressions. You can use parentheses to control evaluation precedence.
 
 ```cs
-double d;
 ExpressionEvaluator eval = new ExpressionEvaluator();
+double d;
 
 d = eval.Evaluate("2 + 2"));        // Returns 4
 d = eval.Evaluate("2 + 3 * 5"));    // Returns 17
