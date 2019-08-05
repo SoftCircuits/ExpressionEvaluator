@@ -12,7 +12,7 @@ Expression evaluator will evaluate a string that contains an expression and retu
 
 In addition, expressions can contain symbols and functions, and functions arguments can be expressions that also include symbols and functions. When the evaluator encounters a symbol or function, it will raise the `EvaluateSymbol` or `EvaluateFunction` events.
 
-## Basic Examples
+## Basic Example
 
 This example evaluates simple expressions. You can use parentheses to control evaluation precedence.
 
