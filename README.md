@@ -14,7 +14,7 @@ In addition, expressions can contain symbols and functions, and functions argume
 
 ## Basic Example
 
-This example evaluates simple expressions. You can use parentheses to control evaluation precedence.
+This example evaluates simple expressions.
 
 ```cs
 ExpressionEvaluator eval = new ExpressionEvaluator();
