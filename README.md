@@ -68,8 +68,8 @@ The next examples employs both symbols and functions. Note that the `EvaluateFun
 void Test()
 {
     ExpressionEvaluator eval = new ExpressionEvaluator();
-    eval.EvaluateFunction += Eval_EvaluateFunction;
     eval.EvaluateSymbol += Eval_EvaluateSymbol;
+    eval.EvaluateFunction += Eval_EvaluateFunction;
     double d;
 
     d = eval.Evaluate("add(two, two)"));                    // Returns 4
