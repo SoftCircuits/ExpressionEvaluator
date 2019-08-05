@@ -8,7 +8,7 @@ Install-Package SoftCircuits.ExpressionEvaluator
 
 ## Overview
 
-Expression evaluator will evaluate a string that contains an expression and return the result of that expression. Expressions can include parentheses to control evaluation priorities and the currently supported operators are `+`, `-`, `*`, and `/`.
+Expression evaluator will evaluate a string that contains an expression and return the result of that expression. Expressions can include parentheses to control evaluation priorities and the currently supported operators are `+`, `-`, `*`, `/` and `%`.
 
 In addition, expressions can contain symbols and functions, and functions arguments can be expressions that also include symbols and functions. When the evaluator encounters a symbol or function, it will raise the `ProcessSymbol` or `ProcessFunction` events.
 
