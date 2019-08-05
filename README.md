@@ -121,4 +121,4 @@ private void Eval_EvaluateFunction(object sender, FunctionEventArgs e)
 
 ## Additional Information
 
-This code was based on the article [A C# Expression Evaluator](http://www.blackbeltcoder.com/Articles/algorithms/a-c-expression-evaluator) article on Black Belt Coder.
+This code was derived from the article [A C# Expression Evaluator](http://www.blackbeltcoder.com/Articles/algorithms/a-c-expression-evaluator).
