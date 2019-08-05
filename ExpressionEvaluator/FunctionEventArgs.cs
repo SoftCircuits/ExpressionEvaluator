@@ -17,7 +17,7 @@ namespace SoftCircuits.ExpressionEvaluator
     public class FunctionEventArgs : EventArgs
     {
         public string Name { get; set; }
-        public List<double> Parameters { get; set; }
+        public double[] Parameters { get; set; }
         public double Result { get; set; }
         public FunctionStatus Status { get; set; }
     }

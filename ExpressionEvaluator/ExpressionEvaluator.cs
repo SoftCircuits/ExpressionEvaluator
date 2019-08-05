@@ -3,19 +3,16 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace SoftCircuits.ExpressionEvaluator
 {
     /// <summary>
-    /// Expression evaluator class
+    /// Expression evaluator class.
     /// </summary>
     public class ExpressionEvaluator
     {
-        // Event handers
-        public event EventHandler<SymbolEventArgs> ProcessSymbol;
-        public event EventHandler<FunctionEventArgs> ProcessFunction;
-
         // Token state enums
         protected enum State
         {
@@ -26,21 +23,24 @@ namespace SoftCircuits.ExpressionEvaluator
         }
 
         // Error messages
-        protected string ErrInvalidOperand = "Invalid operand";
-        protected string ErrOperandExpected = "Operand expected";
-        protected string ErrOperatorExpected = "Operator expected";
-        protected string ErrUnmatchedClosingParen = "Closing parenthesis without matching open parenthesis";
-        protected string ErrMultipleDecimalPoints = "Operand contains multiple decimal points";
-        protected string ErrUnexpectedCharacter = "Unexpected character encountered \"{0}\"";
-        protected string ErrUndefinedSymbol = "Undefined symbol \"{0}\"";
-        protected string ErrUndefinedFunction = "Undefined function \"{0}\"";
-        protected string ErrClosingParenExpected = "Closing parenthesis expected";
-        protected string ErrWrongParamCount = "Wrong number of function parameters";
+        internal const string ErrInvalidOperand = "Invalid operand";
+        internal const string ErrOperandExpected = "Operand expected";
+        internal const string ErrOperatorExpected = "Operator expected";
+        internal const string ErrUnmatchedClosingParen = "Closing parenthesis without matching open parenthesis";
+        internal const string ErrMultipleDecimalPoints = "Operand contains multiple decimal points";
+        internal const string ErrUnexpectedCharacter = "Unexpected character encountered '{0}'";
+        internal const string ErrUndefinedSymbol = "Undefined symbol '{0}'";
+        internal const string ErrUndefinedFunction = "Undefined function '{0}'";
+        internal const string ErrClosingParenExpected = "Closing parenthesis expected";
+        internal const string ErrWrongParamCount = "Wrong number of function parameters";
 
-        // To distinguish it from a minus operator,
-        // we'll use a character unlikely to appear
-        // in expressions to signify a unary negative
-        protected const string UnaryMinus = "\x80";
+        // Event handers
+        public event EventHandler<SymbolEventArgs> EvaluateSymbol;
+        public event EventHandler<FunctionEventArgs> EvaluateFunction;
+
+        private bool IsNumberChar(char c) => char.IsDigit(c) || c == '.';
+        private bool IsSymbolFirstChar(char c) => char.IsLetter(c) || c == '_';
+        private bool IsSymbolChar(char c) => char.IsLetterOrDigit(c) || c == '_';
 
         //
         public ExpressionEvaluator()
@@ -48,38 +48,37 @@ namespace SoftCircuits.ExpressionEvaluator
         }
 
         /// <summary>
-        /// Evaluates the given expression and returns the result
+        /// Evaluates the given expression and returns the result.
         /// </summary>
-        /// <param name="expression">The expression to evaluate</param>
-        /// <returns></returns>
+        /// <param name="expression">The expression to evaluate.</param>
+        /// <returns>Returns the numeric result of the expression.</returns>
         public double Evaluate(string expression)
         {
-            return ExecuteTokens(TokenizeExpression(expression));
+            return EvaluateTokens(TokenizeExpression(expression));
         }
 
         /// <summary>
         /// Converts a standard infix expression to list of tokens in
         /// postfix order.
         /// </summary>
-        /// <param name="expression">Expression to evaluate</param>
-        /// <returns></returns>
-        protected List<string> TokenizeExpression(string expression)
+        /// <param name="expression">Expression to evaluate.</param>
+        /// <returns>List of tokens in postfix order.</returns>
+        private List<Token> TokenizeExpression(string expression)
         {
-            List<string> tokens = new List<string>();
-            Stack<string> stack = new Stack<string>();
+            ParsingHelper parser = new ParsingHelper(expression);
+            List<Token> tokens = new List<Token>();
+            Stack<Token> stack = new Stack<Token>();
             State state = State.None;
             int parenCount = 0;
-            string temp;
-
-            ParsingHelper parser = new ParsingHelper(expression);
+            Token token;
 
             while (!parser.EndOfText)
             {
-                if (char.IsWhiteSpace(parser.Peek()))
-                {
-                    // Ignore spaces, tabs, etc.
-                }
-                else if (parser.Peek() == '(')
+                // Skip spaces, tabs, etc.
+                parser.SkipWhitespace();
+                // Get next character
+                char c = parser.Peek();
+                if (c == '(')
                 {
                     // Cannot follow operand
                     if (state == State.Operand)
@@ -88,11 +87,11 @@ namespace SoftCircuits.ExpressionEvaluator
                     if (state == State.UnaryOperator)
                         state = State.Operator;
                     // Push opening parenthesis onto stack
-                    stack.Push(parser.Peek().ToString());
+                    stack.Push(new LeftParenthesisToken());
                     // Track number of parentheses
                     parenCount++;
                 }
-                else if (parser.Peek() == ')')
+                else if (c == ')')
                 {
                     // Must follow operand
                     if (state != State.Operand)
@@ -101,25 +100,24 @@ namespace SoftCircuits.ExpressionEvaluator
                     if (parenCount == 0)
                         throw new ExpressionException(ErrUnmatchedClosingParen, parser.Index);
                     // Pop all operators until matching "(" found
-                    temp = stack.Pop();
-                    while (temp != "(")
+                    token = stack.Pop();
+                    while (token.Type != TokenType.LeftParenthesis)
                     {
-                        tokens.Add(temp);
-                        temp = stack.Pop();
+                        tokens.Add(token);
+                        token = stack.Pop();
                     }
                     // Track number of parentheses
                     parenCount--;
                 }
-                else if ("+-*/".Contains(parser.Peek()))
+                else if (OperatorToken.GetOperatorInfo(c, out OperatorInfo info))
                 {
                     // Need a bit of extra code to support unary operators
                     if (state == State.Operand)
                     {
                         // Pop operators with precedence >= current operator
-                        int currPrecedence = GetPrecedence(parser.Peek().ToString());
-                        while (stack.Count > 0 && GetPrecedence(stack.Peek()) >= currPrecedence)
+                        while (stack.Count > 0 && stack.Peek().Precedence >= info.Precedence)
                             tokens.Add(stack.Pop());
-                        stack.Push(parser.Peek().ToString());
+                        stack.Push(new OperatorToken(info));
                         state = State.Operator;
                     }
                     else if (state == State.UnaryOperator)
@@ -130,13 +128,13 @@ namespace SoftCircuits.ExpressionEvaluator
                     else
                     {
                         // Test for unary operator
-                        if (parser.Peek() == '-')
+                        if (c == '-')
                         {
                             // Push unary minus
-                            stack.Push(UnaryMinus);
+                            stack.Push(new OperatorToken(OperatorToken.OpNegate));
                             state = State.UnaryOperator;
                         }
-                        else if (parser.Peek() == '+')
+                        else if (c == '+')
                         {
                             // Just ignore unary plus
                             state = State.UnaryOperator;
@@ -147,7 +145,7 @@ namespace SoftCircuits.ExpressionEvaluator
                         }
                     }
                 }
-                else if (char.IsDigit(parser.Peek()) || parser.Peek() == '.')
+                else if (IsNumberChar(c))
                 {
                     if (state == State.Operand)
                     {
@@ -155,53 +153,46 @@ namespace SoftCircuits.ExpressionEvaluator
                         throw new ExpressionException(ErrOperatorExpected, parser.Index);
                     }
                     // Parse number
-                    temp = ParseNumberToken(parser);
-                    tokens.Add(temp);
+                    tokens.Add(new OperandToken(ParseNumber(parser)));
                     state = State.Operand;
                     continue;
                 }
-                else
+                else if (IsSymbolFirstChar(c))
                 {
-                    double result;
-
                     // Parse symbols and functions
                     if (state == State.Operand)
-                    {
                         // Symbol or function cannot follow other operand
                         throw new ExpressionException(ErrOperatorExpected, parser.Index);
-                    }
-                    if (!(char.IsLetter(parser.Peek()) || parser.Peek() == '_'))
-                    {
-                        // Invalid character
-                        temp = string.Format(ErrUnexpectedCharacter, parser.Peek());
-                        throw new ExpressionException(temp, parser.Index);
-                    }
+
                     // Save start of symbol for error reporting
                     int symbolPos = parser.Index;
+
                     // Parse this symbol
-                    temp = ParseSymbolToken(parser);
+                    string symbol = parser.ParseWhile(IsSymbolChar);
+
                     // Skip whitespace
                     parser.SkipWhitespace();
                     // Check for parameter list
+                    double result;
                     if (parser.Peek() == '(')
                     {
                         // Found parameter list, evaluate function
-                        result = EvaluateFunction(parser, temp, symbolPos);
+                        result = ParseFunction(parser, symbol, symbolPos);
                     }
                     else
                     {
                         // No parameter list, evaluate symbol (variable)
-                        result = EvaluateSymbol(temp, symbolPos);
+                        result = ParseSymbol(symbol, symbolPos);
                     }
-                    // Handle negative result
-                    if (result < 0)
-                    {
-                        stack.Push(UnaryMinus);
-                        result = Math.Abs(result);
-                    }
-                    tokens.Add(result.ToString());
+                    tokens.Add(new OperandToken(result));
                     state = State.Operand;
+                    // Don't MoveAhead again
                     continue;
+                }
+                else
+                {
+                    // Unrecognized character
+                    throw new ExpressionException(ErrUnexpectedCharacter, c, parser.Index);
                 }
                 parser.MoveAhead();
             }
@@ -218,12 +209,14 @@ namespace SoftCircuits.ExpressionEvaluator
         }
 
         /// <summary>
-        /// Parses and extracts a numeric value at the current position
+        /// Parses and extracts a numeric value at the current position.
         /// </summary>
-        /// <param name="parser">ParsingHelper object</param>
-        /// <returns></returns>
-        private string ParseNumberToken(ParsingHelper parser)
+        /// <param name="parser">Current parsing helper object.</param>
+        /// <returns>The extracted number token string.</returns>
+        private double ParseNumber(ParsingHelper parser)
         {
+            Debug.Assert(IsNumberChar(parser.Peek()));
+
             bool hasDecimal = false;
             int start = parser.Index;
             while (char.IsDigit(parser.Peek()) || parser.Peek() == '.')
@@ -240,55 +233,65 @@ namespace SoftCircuits.ExpressionEvaluator
             string token = parser.Extract(start, parser.Index);
             if (token == ".")
                 throw new ExpressionException(ErrInvalidOperand, parser.Index - 1);
-            return token;
+
+            return double.Parse(token);
         }
 
         /// <summary>
-        /// Parses and extracts a symbol at the current position
+        /// This method evaluates a symbol name and returns its value.
         /// </summary>
-        /// <param name="parser">ParsingHelper object</param>
+        /// <param name="name">Name of symbol.</param>
+        /// <param name="pos">Position at start of symbol.</param>
         /// <returns></returns>
-        private string ParseSymbolToken(ParsingHelper parser)
+        protected double ParseSymbol(string name, int pos)
         {
-            int start = parser.Index;
-            while (char.IsLetterOrDigit(parser.Peek()) || parser.Peek() == '_')
-                parser.MoveAhead();
-            return parser.Extract(start, parser.Index);
+            // Create event args
+            SymbolEventArgs args = new SymbolEventArgs
+            {
+                Name = name,
+                Result = default,
+                Status = SymbolStatus.OK,
+            };
+
+            if (EvaluateSymbol != null)
+                EvaluateSymbol(this, args);
+            else
+                args.Status = SymbolStatus.UndefinedSymbol;
+
+            // Throw exception if error
+            if (args.Status == SymbolStatus.UndefinedSymbol)
+                throw new ExpressionException(string.Format(ErrUndefinedSymbol, name), pos);
+            return args.Result;
         }
 
         /// <summary>
         /// Evaluates a function and returns its value. It is assumed the current
         /// position is at the opening parenthesis of the argument list.
         /// </summary>
-        /// <param name="parser">ParsingHelper object</param>
-        /// <param name="name">Name of function</param>
-        /// <param name="pos">Position at start of function</param>
+        /// <param name="parser">ParsingHelper object.</param>
+        /// <param name="name">Name of function.</param>
+        /// <param name="pos">Position at start of function.</param>
         /// <returns></returns>
-        private double EvaluateFunction(ParsingHelper parser, string name, int pos)
+        private double ParseFunction(ParsingHelper parser, string name, int pos)
         {
-            double result = default(double);
-
-            // Parse function parameters
-            List<double> parameters = ParseParameters(parser);
-
-            // We found a function reference
-            FunctionStatus status = FunctionStatus.UndefinedFunction;
-            if (ProcessFunction != null)
+            FunctionEventArgs args = new FunctionEventArgs
             {
-                FunctionEventArgs args = new FunctionEventArgs();
-                args.Name = name;
-                args.Parameters = parameters;
-                args.Result = result;
-                args.Status = FunctionStatus.OK;
-                ProcessFunction(this, args);
-                result = args.Result;
-                status = args.Status;
-            }
-            if (status == FunctionStatus.UndefinedFunction)
+                Name = name,
+                Parameters = ParseParameters(parser),
+                Result = default,
+                Status = FunctionStatus.OK,
+            };
+
+            if (EvaluateFunction != null)
+                EvaluateFunction(this, args);
+            else
+                args.Status = FunctionStatus.UndefinedFunction;
+
+            if (args.Status == FunctionStatus.UndefinedFunction)
                 throw new ExpressionException(string.Format(ErrUndefinedFunction, name), pos);
-            if (status == FunctionStatus.WrongParameterCount)
+            if (args.Status == FunctionStatus.WrongParameterCount)
                 throw new ExpressionException(ErrWrongParamCount, pos);
-            return result;
+            return args.Result;
         }
 
         /// <summary>
@@ -297,20 +300,20 @@ namespace SoftCircuits.ExpressionEvaluator
         /// were found. It is assumed the current position is at the opening
         /// parenthesis of the argument list.
         /// </summary>
-        /// <param name="parser">ParsingHelper object</param>
-        /// <returns></returns>
-        private List<double> ParseParameters(ParsingHelper parser)
+        /// <param name="parser">ParsingHelper object.</param>
+        /// <returns>A list of parameter values.</returns>
+        private double[] ParseParameters(ParsingHelper parser)
         {
+            List<double> parameters = new List<double>();
+
             // Move past open parenthesis
             parser.MoveAhead();
-
-            // Look for function parameters
-            List<double> parameters = new List<double>();
             parser.SkipWhitespace();
+            // If function has any parameters
             if (parser.Peek() != ')')
             {
                 // Parse function parameter list
-                int paramStart = parser.Index;
+                int start = parser.Index;
                 int parenCount = 1;
 
                 while (!parser.EndOfText)
@@ -318,11 +321,11 @@ namespace SoftCircuits.ExpressionEvaluator
                     if (parser.Peek() == ',')
                     {
                         // Note: Ignore commas inside parentheses. They could be
-                        // from a parameter list for a function inside the parameters
+                        // for a parameter list in a function inside the parameters
                         if (parenCount == 1)
                         {
-                            parameters.Add(EvaluateParameter(parser, paramStart));
-                            paramStart = parser.Index + 1;
+                            parameters.Add(ParseParameter(parser, start));
+                            start = parser.Index + 1;
                         }
                     }
                     if (parser.Peek() == ')')
@@ -330,7 +333,7 @@ namespace SoftCircuits.ExpressionEvaluator
                         parenCount--;
                         if (parenCount == 0)
                         {
-                            parameters.Add(EvaluateParameter(parser, paramStart));
+                            parameters.Add(ParseParameter(parser, start));
                             break;
                         }
                     }
@@ -347,7 +350,7 @@ namespace SoftCircuits.ExpressionEvaluator
             // Move past closing parenthesis
             parser.MoveAhead();
             // Return parameter list
-            return parameters;
+            return parameters.ToArray();
         }
 
         /// <summary>
@@ -355,50 +358,23 @@ namespace SoftCircuits.ExpressionEvaluator
         /// exception occurs, it is caught and the column is adjusted to reflect the
         /// position in original string, and the exception is rethrown.
         /// </summary>
-        /// <param name="parser">ParsingHelper object</param>
-        /// <param name="paramStart">Column where this parameter started</param>
-        /// <returns></returns>
-        private double EvaluateParameter(ParsingHelper parser, int paramStart)
+        /// <param name="parser">ParsingHelper object.</param>
+        /// <param name="start">Index where current parameter starts.</param>
+        /// <returns>The parameter value.</returns>
+        private double ParseParameter(ParsingHelper parser, int start)
         {
             try
             {
-                // Extract expression and evaluate it
-                string expression = parser.Extract(paramStart, parser.Index);
+                // Recursively evaluate expression
+                string expression = parser.Extract(start, parser.Index);
                 return Evaluate(expression);
             }
             catch (ExpressionException ex)
             {
                 // Adjust column and rethrow exception
-                ex.Index += paramStart;
+                ex.Index += start;
                 throw ex;
             }
-        }
-
-        /// <summary>
-        /// This method evaluates a symbol name and returns its value.
-        /// </summary>
-        /// <param name="name">Name of symbol</param>
-        /// <param name="pos">Position at start of symbol</param>
-        /// <returns></returns>
-        protected double EvaluateSymbol(string name, int pos)
-        {
-            double result = default;
-
-            // We found a symbol reference
-            SymbolStatus status = SymbolStatus.UndefinedSymbol;
-            if (ProcessSymbol != null)
-            {
-                SymbolEventArgs args = new SymbolEventArgs();
-                args.Name = name;
-                args.Result = result;
-                args.Status = SymbolStatus.OK;
-                ProcessSymbol(this, args);
-                result = args.Result;
-                status = args.Status;
-            }
-            if (status == SymbolStatus.UndefinedSymbol)
-                throw new ExpressionException(string.Format(ErrUndefinedSymbol, name), pos);
-            return result;
         }
 
         /// <summary>
@@ -406,71 +382,22 @@ namespace SoftCircuits.ExpressionEvaluator
         /// Tokens must appear in postfix order.
         /// </summary>
         /// <param name="tokens">List of tokens to evaluate.</param>
-        /// <returns></returns>
-        protected double ExecuteTokens(List<string> tokens)
+        /// <returns>The result of all tokens.</returns>
+        private double EvaluateTokens(List<Token> tokens)
         {
             Stack<double> stack = new Stack<double>();
-            double tmp, tmp2;
 
-            foreach (string token in tokens)
+            Debug.Assert(tokens.All(t => t.Type == TokenType.Operand || t.Type == TokenType.Operator));
+            foreach (Token token in tokens)
             {
-                // Is this a value token?
-                int count = token.Count(c => char.IsDigit(c) || c == '.');
-                if (count == token.Length)
-                {
-                    stack.Push(double.Parse(token));
-                }
-                else if (token == "+")
-                {
-                    stack.Push(stack.Pop() + stack.Pop());
-                }
-                else if (token == "-")
-                {
-                    tmp = stack.Pop();
-                    tmp2 = stack.Pop();
-                    stack.Push(tmp2 - tmp);
-                }
-                else if (token == "*")
-                {
-                    stack.Push(stack.Pop() * stack.Pop());
-                }
-                else if (token == "/")
-                {
-                    tmp = stack.Pop();
-                    tmp2 = stack.Pop();
-                    stack.Push(tmp2 / tmp);
-                }
-                else if (token == UnaryMinus)
-                {
-                    stack.Push(-stack.Pop());
-                }
+                if (token is OperandToken operandToken)
+                    stack.Push(operandToken.Value);
+                else if (token is OperatorToken operatorToken)
+                    operatorToken.Evaluator(stack);
             }
             // Remaining item on stack contains result
+            Debug.Assert(stack.Count == 1);
             return (stack.Count > 0) ? stack.Pop() : 0.0;
-        }
-
-        /// <summary>
-        /// Returns a value that indicates the relative precedence of
-        /// the specified operator
-        /// </summary>
-        /// <param name="s">Operator to be tested</param>
-        /// <returns></returns>
-        protected int GetPrecedence(string s)
-        {
-            switch (s)
-            {
-                case "+":
-                case "-":
-                    return 1;
-                case "*":
-                case "/":
-                    return 2;
-                case "^":
-                    return 3;
-                case UnaryMinus:
-                    return 10;
-            }
-            return 0;
         }
     }
 }

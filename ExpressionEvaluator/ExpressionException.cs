@@ -24,6 +24,18 @@ namespace SoftCircuits.ExpressionEvaluator
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="format"></param>
+        /// <param name="argument"></param>
+        /// <param name="index"></param>
+        public ExpressionException(string format, object argument, int index)
+            : base(string.Format(format, argument))
+        {
+            Index = index;
+        }
+
+        /// <summary>
         /// Gets the message associated with this exception
         /// </summary>
         public override string Message

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -13,11 +13,12 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>expression evaluator expression-evaluator parser symbol function</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageReleaseNotes>Initial version</PackageReleaseNotes>
+    <PackageReleaseNotes>Reworked the code internally; Added some additional cases to unit tests; Miscellaneous tweaks; BREAKING CHANGES: Renamed ProcessSymbol event to EvaluateSymbol; Renamed ProcessFunction event to EvaluateFunction; Changed FunctionEventArgs.Parameters from List&lt;T&gt; to array.</PackageReleaseNotes>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <Description>Expression evaluator that will evaluate a string that contains an expression and return the result of that expression. Expressions can include parentheses to control evaluation priorities and the currently supported operators are `+`, `-`, `*`, and `/`.
+    <Description>Expression evaluator that will evaluate a string that contains an expression and return the result of that expression. Expressions can include parentheses to control evaluation priorities and the currently supported operators are "+", "-", "*", "/" and "%".
 
-In addition, expressions can contain symbols and functions, and functions arguments can be expressions that also include symbols and functions. When the evaluator encounters a symbol or function, it will raise the `ProcessSymbol` or `ProcessFunction` events.</Description>
+In addition, expressions can contain symbols and functions, and functions arguments can be expressions that also include symbols and functions. When the evaluator encounters a symbol or function, it will raise the EvaluateSymbol or EvaluateFunction event.</Description>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
