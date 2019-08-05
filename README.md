@@ -27,14 +27,14 @@ d = eval.Evaluate("(2 + 3) * 5"));  // Returns 25
 
 ## Expression Symbols
 
-This example evaluates an expression with symbols. The `EvaluateSymbol` event handler defines three symbols, and sets the status to `SymbolStatus.UndefinedSymbol` if the symbol is not supported. Setting the status to `SymbolStatus.UndefinedSymbol` causes an `EvaluationException` exception to be thrown.
+This example evaluates an expression with symbols. The `EvaluateSymbol` event handler defines three symbols, and sets the status to `SymbolStatus.UndefinedSymbol` if the symbol is not defined. Setting the status to `SymbolStatus.UndefinedSymbol` causes an `EvaluationException` exception to be thrown.
 
 ```cs
 void Test()
 {
-    double d;
     ExpressionEvaluator eval = new ExpressionEvaluator();
     eval.EvaluateSymbol += Eval_EvaluateSymbol;
+    double d;
 
     d = eval.Evaluate("two + two")); // Returns 4
     d = eval.Evaluate("two + three * five"));   // Returns 17
@@ -62,15 +62,15 @@ private void Eval_EvaluateSymbol(object sender, SymbolEventArgs e)
 ```
 ## Expression Functions
 
-The next examples employs both symbols and functions. Note that the `EvaluateFunction` event handler defines two functions. It sets the status to `FunctionStatus.UndefinedFunction` if the function is not supported. In addition, it sets the status to `FunctionStatus.WrongParameterCount` if the number of arguments passed is not valid for the function. Setting the status to `FunctionStatus.UndefinedFunction` or `FunctionStatus.WrongParameterCount` causes an `EvaluationException` exception to be thrown.
+The next examples employs both symbols and functions. Note that the `EvaluateFunction` event handler defines two functions. It sets the status to `FunctionStatus.UndefinedFunction` if the function is not defined. In addition, it sets the status to `FunctionStatus.WrongParameterCount` if the number of arguments passed is not valid for the function. Setting the status to `FunctionStatus.UndefinedFunction` or `FunctionStatus.WrongParameterCount` causes an `EvaluationException` exception to be thrown.
 
 ```cs
 void Test()
 {
-    double d;
     ExpressionEvaluator eval = new ExpressionEvaluator();
     eval.EvaluateFunction += Eval_EvaluateFunction;
     eval.EvaluateSymbol += Eval_EvaluateSymbol;
+    double d;
 
     d = eval.Evaluate("add(two, two)"));                    // Returns 4
     d = eval.Evaluate("two + multiply(three, five)"));      // Returns 17
