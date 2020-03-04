@@ -70,11 +70,11 @@ void Test()
     ExpressionEvaluator eval = new ExpressionEvaluator();
     eval.EvaluateSymbol += Eval_EvaluateSymbol;
     eval.EvaluateFunction += Eval_EvaluateFunction;
-    double d;
+    Variable v;
 
-    d = eval.Evaluate("add(two, two)"));                    // Returns 4
-    d = eval.Evaluate("two + multiply(three, five)"));      // Returns 17
-    d = eval.Evaluate("multiply(add(two, three), five)"));  // Returns 25
+    v = eval.Evaluate("add(two, two)"));                    // Returns 4
+    v = eval.Evaluate("two + multiply(three, five)"));      // Returns 17
+    v = eval.Evaluate("multiply(add(two, three), five)"));  // Returns 25
 }
 
 private void Eval_EvaluateSymbol(object sender, SymbolEventArgs e)
@@ -82,13 +82,13 @@ private void Eval_EvaluateSymbol(object sender, SymbolEventArgs e)
     switch (e.Name)
     {
         case "two":
-            e.Result = 2;
+            e.Result.SetValue(2);
             break;
         case "three":
-            e.Result = 3;
+            e.Result.SetValue(3);
             break;
         case "five":
-            e.Result = 5;
+            e.Result.SetValue(5);
             break;
         default:
             e.Status = SymbolStatus.UndefinedSymbol;
@@ -96,21 +96,25 @@ private void Eval_EvaluateSymbol(object sender, SymbolEventArgs e)
     }
 }
 
-private void Eval_EvaluateFunction(object sender, FunctionEventArgs e)
+private void Eval_ProcessFunction(object sender, FunctionEventArgs e)
 {
     switch (e.Name)
     {
         case "add":
             if (e.Parameters.Length == 2)
-                e.Result = e.Parameters[0] + e.Parameters[1];
-            else
-                e.Status = FunctionStatus.WrongParameterCount;
+            {
+                e.Result.SetValue(e.Parameters[0]);
+                e.Result.Add(e.Parameters[1]);
+            }
+            else e.Status = FunctionStatus.WrongParameterCount;
             break;
         case "multiply":
             if (e.Parameters.Length == 2)
-                e.Result = e.Parameters[0] * e.Parameters[1];
-            else
-                e.Status = FunctionStatus.WrongParameterCount;
+            {
+                e.Result.SetValue(e.Parameters[0]);
+                e.Result.Multiply(e.Parameters[1]);
+            }
+            else e.Status = FunctionStatus.WrongParameterCount;
             break;
         default:
             e.Status = FunctionStatus.UndefinedFunction;
