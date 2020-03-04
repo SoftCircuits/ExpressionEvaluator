@@ -8,49 +8,50 @@ Install-Package SoftCircuits.ExpressionEvaluator
 
 ## Overview
 
-ExpressionEvaluator is a .NET library that will evaluate a string expression. Supports custom functions and symbols. Expressions operands can include integers, doubles or strings. Operators can include `+`, `-`, `*`, `/`, `%` or `&`. The library provides easy integration with any application.
+ExpressionEvaluator is a .NET library that will evaluate a string expression. It also supports custom functions and symbols. Expression operands can include integers, doubles and strings. And operators include `+`, `-`, `*`, `/`, `%` and `&`.
 
-Custom functions and symbols are implemented using the `EvaluateFunction` and `EvaluateSymbol` events. These events are raised when ExpressionEvaluator encounters a function or symbol in the expression.
+The library easily integrates with any .NET application. Custom functions and symbols are implemented using the `EvaluateFunction` and `EvaluateSymbol` events. These events are raised when ExpressionEvaluator encounters a function or symbol in the expression.
 
 ## Basic Example
 
-This example evaluates simple expressions.
+Use the `Evaluate()` method to evaluate a string expression and return the result. The result is of type `Variable`. A `Variable` can hold an integer, double or string value. You can use the `Type` property to determine its current type, or just call the `ToString()` method to convert the value to a string. The `Variable` class includes methods to set its value, convert its value to another type and perform various operations. It also overloads many operators to make it easier to work with.
 
 ```cs
 ExpressionEvaluator eval = new ExpressionEvaluator();
 Variable v;
 
-v = eval.Evaluate("2 + 2"));        // Returns 4
-v = eval.Evaluate("2 + 3 * 5"));    // Returns 17
-v = eval.Evaluate("(2 + 3) * 5"));  // Returns 25
+v = eval.Evaluate("2 + 2");        // Returns 4  (Integer)
+v = eval.Evaluate("2 + 3 * 5");    // Returns 17 (Integer)
+v = eval.Evaluate("(2 + 3) * 5");  // Returns 25 (Integer)
 ```
 
-Note that `Variable` data type. This type can hold integer, double or string data. `Variable` objects have a number of methods to retrieve and set values.
-
-The library also supports expressions that contain strings. Strings can be any text enclosed in either double or single quotes. If the string contains two quotes together, they will be interpreted as a single quote character rather than the end of the string.
+Expressions may also include string literals. Strings are any text enclosed in either double or single quotes. If the string contains two quotes together, they will be interpreted as a single quote character rather than the end of the string.
 
 ```cs
 ExpressionEvaluator eval = new ExpressionEvaluator();
 Variable v;
 
-v = eval.Evaluate("\"2\" & \"2\""));  // Returns "22"
-v = eval.Evaluate("\"2\" + \"2\""));  // Returns "4"
+v = eval.Evaluate("\"2\" & \"2\"");  // Returns 22 (String)
+v = eval.Evaluate("'2' & '2'");      // Returns 22 (String)
+v = eval.Evaluate("\"2\" + \"2\"");  // Returns 4 (Double)
 ```
+
+Note the concatenation operator (`&`). This operator converts both operands to a string (if needed) and then concatenates them.
 
 ## Expression Symbols
 
-This example evaluates an expression with symbols. The `EvaluateSymbol` event handler defines three symbols, and sets the status to `SymbolStatus.UndefinedSymbol` if the symbol is not defined. Setting the status to `SymbolStatus.UndefinedSymbol` causes an `EvaluationException` exception to be thrown.
+This example evaluates an expression with symbols. The `EvaluateSymbol` event handler defines three symbols (`"two"`, `"three"`, and `"five"`), and sets the status to `SymbolStatus.UndefinedSymbol` if the event is raised for an unknown symbol. Setting the status to `SymbolStatus.UndefinedSymbol` causes an `EvaluationException` exception to be thrown.
 
 ```cs
-void Test()
+public void Test()
 {
     ExpressionEvaluator eval = new ExpressionEvaluator();
     eval.EvaluateSymbol += Eval_EvaluateSymbol;
     Variable v;
 
-    v = eval.Evaluate("two + two")); // Returns 4
-    v = eval.Evaluate("two + three * five"));   // Returns 17
-    v = eval.Evaluate("(two + three) * five")); // Returns 25
+    v = eval.Evaluate("two + two");            // Returns 4  (Integer)
+    v = eval.Evaluate("two + three * five");   // Returns 17 (Integer)
+    v = eval.Evaluate("(two + three) * five"); // Returns 25 (Integer)
 }
 
 private void Eval_EvaluateSymbol(object sender, SymbolEventArgs e)
@@ -72,61 +73,38 @@ private void Eval_EvaluateSymbol(object sender, SymbolEventArgs e)
     }
 }
 ```
+
 ## Expression Functions
 
-The next examples employs both symbols and functions. Note that the `EvaluateFunction` event handler defines two functions. It sets the status to `FunctionStatus.UndefinedFunction` if the function is not defined. In addition, it sets the status to `FunctionStatus.WrongParameterCount` if the number of arguments passed is not valid for the function. Setting the status to `FunctionStatus.UndefinedFunction` or `FunctionStatus.WrongParameterCount` causes an `EvaluationException` exception to be thrown.
+The next example defines two custom functions (`"add"` and `"multiply"`). The `EvaluateFunction` event handler sets the status to `FunctionStatus.UndefinedFunction` if the function name is not supported. In addition, it sets the status to `FunctionStatus.WrongParameterCount` if the number of arguments passed is not valid for the function. Setting the status to `FunctionStatus.UndefinedFunction` or `FunctionStatus.WrongParameterCount` causes an `EvaluationException` exception to be thrown.
 
 ```cs
 void Test()
 {
     ExpressionEvaluator eval = new ExpressionEvaluator();
-    eval.EvaluateSymbol += Eval_EvaluateSymbol;
     eval.EvaluateFunction += Eval_EvaluateFunction;
     Variable v;
 
-    v = eval.Evaluate("add(two, two)"));                    // Returns 4
-    v = eval.Evaluate("two + multiply(three, five)"));      // Returns 17
-    v = eval.Evaluate("multiply(add(two, three), five)"));  // Returns 25
+    v = eval.Evaluate("add(2, 2)");               // Returns 4  (Integer)
+    v = eval.Evaluate("2 + multiply(3, 5)");      // Returns 17 (Integer)
+    v = eval.Evaluate("multiply(add(2, 3), 5)");  // Returns 25 (Integer)
 }
 
-private void Eval_EvaluateSymbol(object sender, SymbolEventArgs e)
-{
-    switch (e.Name)
-    {
-        case "two":
-            e.Result.SetValue(2);
-            break;
-        case "three":
-            e.Result.SetValue(3);
-            break;
-        case "five":
-            e.Result.SetValue(5);
-            break;
-        default:
-            e.Status = SymbolStatus.UndefinedSymbol;
-            break;
-    }
-}
-
-private void Eval_ProcessFunction(object sender, FunctionEventArgs e)
+private void Eval_EvaluateFunction(object sender, FunctionEventArgs e)
 {
     switch (e.Name)
     {
         case "add":
             if (e.Parameters.Length == 2)
-            {
-                e.Result.SetValue(e.Parameters[0]);
-                e.Result.Add(e.Parameters[1]);
-            }
-            else e.Status = FunctionStatus.WrongParameterCount;
+                e.Result.SetValue(e.Parameters[0] + e.Parameters[1]);
+            else
+                e.Status = FunctionStatus.WrongParameterCount;
             break;
         case "multiply":
             if (e.Parameters.Length == 2)
-            {
-                e.Result.SetValue(e.Parameters[0]);
-                e.Result.Multiply(e.Parameters[1]);
-            }
-            else e.Status = FunctionStatus.WrongParameterCount;
+                e.Result.SetValue(e.Parameters[0] * e.Parameters[1]);
+            else
+                e.Status = FunctionStatus.WrongParameterCount;
             break;
         default:
             e.Status = FunctionStatus.UndefinedFunction;
@@ -134,6 +112,8 @@ private void Eval_ProcessFunction(object sender, FunctionEventArgs e)
     }
 }
 ```
+
+As the example above demonstrates, expressions can include nested functions (functions that are passed the result of another function or expression).
 
 ## Additional Information
 
