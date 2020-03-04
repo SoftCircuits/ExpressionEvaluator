@@ -117,7 +117,7 @@ namespace SoftCircuits.ExpressionEvaluator
             Debug.Assert(stack.Count >= 2);
             Variable var2 = stack.Pop();
             Variable var1 = stack.Pop();
-            var1.Remainder(var2);
+            var1.Modulus(var2);
             stack.Push(var1);
         }
 

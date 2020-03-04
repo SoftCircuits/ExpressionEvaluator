@@ -45,6 +45,121 @@ namespace ExpressionEvaluatorTests
         }
 
         [TestMethod]
+        public void TestVariableOperators()
+        {
+            Variable v = new Variable();
+            Variable v2;
+
+            // Conversion operators
+            v.SetValue("12345.6");
+            Assert.AreEqual(12346, v);
+            Assert.AreEqual(12345.6, v);
+            Assert.AreEqual("12345.6", v);
+
+            // Comparison operators
+            v.SetValue(100);
+
+            Assert.IsTrue(v == 100);
+            Assert.IsFalse(v == 47);
+            Assert.IsTrue(v != 1087);
+            Assert.IsFalse(v != 100);
+            Assert.IsTrue(v < 107);
+            Assert.IsFalse(v < 38);
+            Assert.IsTrue(v <= 100);
+            Assert.IsFalse(v <= 9);
+            Assert.IsTrue(v > 39);
+            Assert.IsFalse(v > 2473);
+            Assert.IsTrue(v >= 100);
+            Assert.IsFalse(v >= 3980);
+
+            v.SetValue("abc");
+
+            Assert.IsTrue(v == "abc");
+            Assert.IsFalse(v == "def");
+            Assert.IsTrue(v != "def");
+            Assert.IsFalse(v != "abc");
+            Assert.IsTrue(v < "def");
+            Assert.IsFalse(v < "abc");
+            Assert.IsTrue(v <= "abc");
+            Assert.IsFalse(v <= "aaa");
+            Assert.IsTrue(v > "aaa");
+            Assert.IsFalse(v > "abc");
+            Assert.IsTrue(v >= "abc");
+            Assert.IsFalse(v >= "xyz");
+
+            Assert.IsTrue(v > "100");   // Compare as strings
+            Assert.IsFalse(v > 100);    // Compare as integers ("abc" == 0)
+
+            v.SetValue("100");
+            Assert.IsTrue(v > "10");    // Compare as integers
+            Assert.IsTrue(v < 200);     // Compare as integers
+            Assert.IsTrue(v < "100.1"); // Compare as doubles
+            Assert.IsTrue(v < 100.1);   // Compare as doubles
+
+            // Operation operators
+            v.SetValue(100);
+
+            v2 = v + 1;
+            Assert.AreEqual(101, v2);
+            v2 = v + 1.5;
+            Assert.AreEqual(101.5, v2);
+            v2 = v + "10";
+            Assert.AreEqual(110, v2);
+            v2 = v + v2;
+            Assert.AreEqual(210, v2);
+
+            v2 = v - 1;
+            Assert.AreEqual(99, v2);
+            v2 = v - 1.5;
+            Assert.AreEqual(98.5, v2);
+            v2 = v - "10";
+            Assert.AreEqual(90, v2);
+            v2 = v - v2;
+            Assert.AreEqual(10, v2);
+
+            v2 = v * 1;
+            Assert.AreEqual(100, v2);
+            v2 = v * 1.5;
+            Assert.AreEqual(150, v2);
+            v2 = v * "10";
+            Assert.AreEqual(1000, v2);
+            v2 = v * v2;
+            Assert.AreEqual(100000, v2);
+
+            v2 = v / 1;
+            Assert.AreEqual(100, v2);
+            v2 = v / 1.5;
+            Assert.AreEqual(66.66666666666667, v2);
+            v2 = v / "10";
+            Assert.AreEqual(10, v2);
+            v2 = v / v2;
+            Assert.AreEqual(10, v2);
+            v2 = v / 0;
+            Assert.AreEqual(0, v2);
+
+            v2 = v % 1;
+            Assert.AreEqual(0, v2);
+            v2 = v % 1.5;
+            Assert.AreEqual(1, v2);
+            v2 = v % "34";
+            Assert.AreEqual(32, v2);
+            v2 = v % v2;
+            Assert.AreEqual(4, v2);
+
+            v2 = v & 1;
+            Assert.AreEqual("1001", v2);
+            v2 = v & 1.5;
+            Assert.AreEqual(1001.5, v2);
+            v2 = v & "10";
+            Assert.AreEqual(10010, v2);
+            v2 = v & v2;
+            Assert.AreEqual(10010010, v2);
+
+            v2 = -v;
+            Assert.AreEqual(-100, v2);
+        }
+
+        [TestMethod]
         public void TestSymbols()
         {
             ExpressionEvaluator eval = new ExpressionEvaluator();

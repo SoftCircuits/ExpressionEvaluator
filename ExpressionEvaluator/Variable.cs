@@ -17,7 +17,7 @@ namespace SoftCircuits.ExpressionEvaluator
     /// <summary>
     /// Represents a variable. Can hold an integer, floating point, or string value.
     /// </summary>
-    public class Variable
+    public class Variable : IEquatable<Variable>
     {
         // Internal value
         private int IntegerValue;
@@ -150,7 +150,9 @@ namespace SoftCircuits.ExpressionEvaluator
                 case VariableType.Double:
                     return (int)Math.Round(DoubleValue);
                 case VariableType.String:
-                    return int.TryParse(StringValue, out int value) ? value : default;
+                    if (double.TryParse(StringValue, out double dbl))
+                        return (int)Math.Round(dbl);
+                    return default;
                 default:
                     Debug.Assert(false);
                     return default;
@@ -391,27 +393,27 @@ namespace SoftCircuits.ExpressionEvaluator
         /// Divides this Variable by the given value. Returns zero if the divisor is zero.
         /// </summary>
         /// <param name="value">The value by which to divide.</param>
-        public void Remainder(int value)
+        public void Modulus(int value)
         {
             if (IsFloatingPoint())
                 SetValue((value == 0) ? 0 : ToDouble() % value);
             else
                 SetValue((value == 0) ? 0 : ToInteger() % value);
         }
-        public void Remainder(double value) => SetValue((value == 0) ? 0 : ToDouble() % value);
-        public void Remainder(string value) => StringOperation(value, (x, y) => (y == 0) ? 0 : x % y);
-        public void Remainder(Variable value)
+        public void Modulus(double value) => SetValue((value == 0) ? 0 : ToDouble() % value);
+        public void Modulus(string value) => StringOperation(value, (x, y) => (y == 0) ? 0 : x % y);
+        public void Modulus(Variable value)
         {
             switch (value.Type)
             {
                 case VariableType.Integer:
-                    Remainder(value.IntegerValue);
+                    Modulus(value.IntegerValue);
                     break;
                 case VariableType.Double:
-                    Remainder(value.DoubleValue);
+                    Modulus(value.DoubleValue);
                     break;
                 case VariableType.String:
-                    Remainder(value.StringValue);
+                    Modulus(value.StringValue);
                     break;
                 default:
                     Debug.Assert(false);
@@ -537,7 +539,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// if it does not contain a value.</param>
         /// <param name="isFloat">Returns true if the value is floating point.</param>
         /// <returns>Returns true if the string contained a numeric value.</returns>
-        private bool GetNumericValue(string s, out double value, out bool isFloat)
+        private static bool GetNumericValue(string s, out double value, out bool isFloat)
         {
             if (int.TryParse(s, out int i))
             {
@@ -558,5 +560,269 @@ namespace SoftCircuits.ExpressionEvaluator
 
         #endregion
 
+        #region Conversion operators
+
+        public static implicit operator int(Variable v) => v.ToInteger();
+        public static implicit operator double(Variable v) => v.ToDouble();
+        public static implicit operator string(Variable v) => v.ToString();
+
+        #endregion
+
+        #region Comparison operators
+
+        public static bool operator ==(Variable v1, int v2) => v1.ToInteger() == v2;
+        public static bool operator ==(Variable v1, double v2) => v1.ToDouble() == v2;
+        public static bool operator ==(Variable v1, string v2) => v1.ToString() == v2;
+        public static bool operator ==(Variable v1, Variable v2) => v1.ToString() == v2.ToString();
+
+        public static bool operator !=(Variable v1, int v2) => v1.ToInteger() != v2;
+        public static bool operator !=(Variable v1, double v2) => v1.ToDouble() != v2;
+        public static bool operator !=(Variable v1, string v2) => v1.ToString() != v2;
+        public static bool operator !=(Variable v1, Variable v2) => v1.ToString() != v2.ToString();
+
+        public static bool operator <(Variable v1, int v2) => v1.ToInteger() < v2;
+        public static bool operator <(Variable v1, double v2) => v1.ToDouble() < v2;
+        public static bool operator <(Variable v1, string v2) => CompareStrings(v1, v2) < 0;
+        public static bool operator <(Variable v1, Variable v2) => CompareStrings(v1, v2) < 0;
+
+        public static bool operator <=(Variable v1, int v2) => v1.ToInteger() <= v2;
+        public static bool operator <=(Variable v1, double v2) => v1.ToDouble() <= v2;
+        public static bool operator <=(Variable v1, string v2) => CompareStrings(v1, v2) <= 0;
+        public static bool operator <=(Variable v1, Variable v2) => CompareStrings(v1, v2) <= 0;
+
+        public static bool operator >(Variable v1, int v2) => v1.ToInteger() > v2;
+        public static bool operator >(Variable v1, double v2) => v1.ToDouble() > v2;
+        public static bool operator >(Variable v1, string v2) => CompareStrings(v1, v2) > 0;
+        public static bool operator >(Variable v1, Variable v2) => CompareStrings(v1, v2) > 0;
+
+        public static bool operator >=(Variable v1, int v2) => v1.ToInteger() >= v2;
+        public static bool operator >=(Variable v1, double v2) => v1.ToDouble() >= v2;
+        public static bool operator >=(Variable v1, string v2) => CompareStrings(v1, v2) >= 0;
+        public static bool operator >=(Variable v1, Variable v2) => CompareStrings(v1, v2) >= 0;
+
+        private static double CompareStrings(Variable v1, Variable v2)
+        {
+            // Compare as numbers if possible
+            if (v1.GetNumericValue(out double value1, out bool _) && v2.GetNumericValue(out double value2, out bool _))
+                return value1 - value2;
+            return string.CompareOrdinal(v1.ToString(), v2.ToString());
+        }
+
+        private static double CompareStrings(Variable v1, string v2)
+        {
+            // Compare as numbers if possible
+            if (v1.GetNumericValue(out double value1, out bool _) && GetNumericValue(v2, out double value2, out bool _))
+                return value1 - value2;
+            return string.CompareOrdinal(v1.ToString(), v2);
+        }
+
+        #endregion
+
+        #region Operation operators
+
+        public static Variable operator +(Variable v1, int v2)
+        {
+            Variable v = new Variable(v1);
+            v.Add(v2);
+            return v;
+        }
+        public static Variable operator +(Variable v1, double v2)
+        {
+            Variable v = new Variable(v1);
+            v.Add(v2);
+            return v;
+        }
+        public static Variable operator +(Variable v1, string v2)
+        {
+            Variable v = new Variable(v1);
+            v.Add(v2);
+            return v;
+        }
+        public static Variable operator +(Variable v1, Variable v2)
+        {
+            Variable v = new Variable(v1);
+            v.Add(v2);
+            return v;
+        }
+
+        public static Variable operator -(Variable v1, int v2)
+        {
+            Variable v = new Variable(v1);
+            v.Subtract(v2);
+            return v;
+        }
+        public static Variable operator -(Variable v1, double v2)
+        {
+            Variable v = new Variable(v1);
+            v.Subtract(v2);
+            return v;
+        }
+        public static Variable operator -(Variable v1, string v2)
+        {
+            Variable v = new Variable(v1);
+            v.Subtract(v2);
+            return v;
+        }
+        public static Variable operator -(Variable v1, Variable v2)
+        {
+            Variable v = new Variable(v1);
+            v.Subtract(v2);
+            return v;
+        }
+
+        public static Variable operator *(Variable v1, int v2)
+        {
+            Variable v = new Variable(v1);
+            v.Multiply(v2);
+            return v;
+        }
+        public static Variable operator *(Variable v1, double v2)
+        {
+            Variable v = new Variable(v1);
+            v.Multiply(v2);
+            return v;
+        }
+        public static Variable operator *(Variable v1, string v2)
+        {
+            Variable v = new Variable(v1);
+            v.Multiply(v2);
+            return v;
+        }
+        public static Variable operator *(Variable v1, Variable v2)
+        {
+            Variable v = new Variable(v1);
+            v.Multiply(v2);
+            return v;
+        }
+
+        public static Variable operator /(Variable v1, int v2)
+        {
+            Variable v = new Variable(v1);
+            v.Divide(v2);
+            return v;
+        }
+        public static Variable operator /(Variable v1, double v2)
+        {
+            Variable v = new Variable(v1);
+            v.Divide(v2);
+            return v;
+        }
+        public static Variable operator /(Variable v1, string v2)
+        {
+            Variable v = new Variable(v1);
+            v.Divide(v2);
+            return v;
+        }
+        public static Variable operator /(Variable v1, Variable v2)
+        {
+            Variable v = new Variable(v1);
+            v.Divide(v2);
+            return v;
+        }
+
+        public static Variable operator %(Variable v1, int v2)
+        {
+            Variable v = new Variable(v1);
+            v.Modulus(v2);
+            return v;
+        }
+        public static Variable operator %(Variable v1, double v2)
+        {
+            Variable v = new Variable(v1);
+            v.Modulus(v2);
+            return v;
+        }
+        public static Variable operator %(Variable v1, string v2)
+        {
+            Variable v = new Variable(v1);
+            v.Modulus(v2);
+            return v;
+        }
+        public static Variable operator %(Variable v1, Variable v2)
+        {
+            Variable v = new Variable(v1);
+            v.Modulus(v2);
+            return v;
+        }
+
+        public static Variable operator &(Variable v1, int v2)
+        {
+            Variable v = new Variable(v1);
+            v.Concatenate(v2);
+            return v;
+        }
+        public static Variable operator &(Variable v1, double v2)
+        {
+            Variable v = new Variable(v1);
+            v.Concatenate(v2);
+            return v;
+        }
+        public static Variable operator &(Variable v1, string v2)
+        {
+            Variable v = new Variable(v1);
+            v.Concatenate(v2);
+            return v;
+        }
+        public static Variable operator &(Variable v1, Variable v2)
+        {
+            Variable v = new Variable(v1);
+            v.Concatenate(v2);
+            return v;
+        }
+
+        public static Variable operator -(Variable v1)
+        {
+            Variable v = new Variable(v1);
+            v.Negate();
+            return v;
+        }
+
+        #endregion
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Variable);
+        }
+
+        public bool Equals(Variable other)
+        {
+            if (other == null)
+                return false;
+
+            switch (Type)
+            {
+                case VariableType.Integer:
+                    return other.Type == VariableType.Integer && other.IntegerValue == IntegerValue;
+                case VariableType.Double:
+                    return other.Type == VariableType.Double && other.DoubleValue == DoubleValue;
+                case VariableType.String:
+                    return other.Type == VariableType.String && other.StringValue == StringValue;
+                default:
+                    Debug.Assert(false);
+                    return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 1055843540;
+            hashCode = hashCode * -1521134295 + Type.GetHashCode();
+            switch (Type)
+            {
+                case VariableType.Integer:
+                    hashCode = hashCode * -1521134295 + IntegerValue.GetHashCode();
+                    break;
+                case VariableType.Double:
+                    hashCode = hashCode * -1521134295 + DoubleValue.GetHashCode();
+                    break;
+                case VariableType.String:
+                    hashCode = hashCode * -1521134295 + StringValue.GetHashCode();
+                    break;
+                default:
+                    Debug.Assert(false);
+                    break;
+            }
+            return hashCode;
+        }
     }
 }
