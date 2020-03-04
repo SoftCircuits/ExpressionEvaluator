@@ -8,9 +8,9 @@ Install-Package SoftCircuits.ExpressionEvaluator
 
 ## Overview
 
-Expression evaluator will evaluate a string that contains an expression and return the result of that expression. Expressions can include parentheses to control evaluation priorities and the currently supported operators are `+`, `-`, `*`, `/` and `%`.
+ExpressionEvaluator is a .NET library that will evaluate a string expression. Supports custom functions and symbols. Expressions operands can include integers, doubles or strings. Operators can include `+`, `-`, `*`, `/`, `%` or `&`. The library provides easy integration with any application.
 
-In addition, expressions can contain symbols and functions, and functions arguments can be expressions that also include symbols and functions. When the evaluator encounters a symbol or function, it will raise the `EvaluateSymbol` or `EvaluateFunction` events.
+Custom functions and symbols are implemented using the `EvaluateFunction` and `EvaluateSymbol` events. These events are raised when ExpressionEvaluator encounters a function or symbol in the expression.
 
 ## Basic Example
 
@@ -18,11 +18,23 @@ This example evaluates simple expressions.
 
 ```cs
 ExpressionEvaluator eval = new ExpressionEvaluator();
-double d;
+Variable v;
 
-d = eval.Evaluate("2 + 2"));        // Returns 4
-d = eval.Evaluate("2 + 3 * 5"));    // Returns 17
-d = eval.Evaluate("(2 + 3) * 5"));  // Returns 25
+v = eval.Evaluate("2 + 2"));        // Returns 4
+v = eval.Evaluate("2 + 3 * 5"));    // Returns 17
+v = eval.Evaluate("(2 + 3) * 5"));  // Returns 25
+```
+
+Note that `Variable` data type. This type can hold integer, double or string data. `Variable` objects have a number of methods to retrieve and set values.
+
+The library also supports expressions that contain strings.
+
+```cs
+ExpressionEvaluator eval = new ExpressionEvaluator();
+Variable v;
+
+v = eval.Evaluate("\"2\" & \"2\""));  // Returns "22"
+v = eval.Evaluate("\"2\" + \"2\""));  // Returns "4"
 ```
 
 ## Expression Symbols
@@ -34,11 +46,11 @@ void Test()
 {
     ExpressionEvaluator eval = new ExpressionEvaluator();
     eval.EvaluateSymbol += Eval_EvaluateSymbol;
-    double d;
+    Variable v;
 
-    d = eval.Evaluate("two + two")); // Returns 4
-    d = eval.Evaluate("two + three * five"));   // Returns 17
-    d = eval.Evaluate("(two + three) * five")); // Returns 25
+    v = eval.Evaluate("two + two")); // Returns 4
+    v = eval.Evaluate("two + three * five"));   // Returns 17
+    v = eval.Evaluate("(two + three) * five")); // Returns 25
 }
 
 private void Eval_EvaluateSymbol(object sender, SymbolEventArgs e)
