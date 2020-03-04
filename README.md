@@ -58,13 +58,13 @@ private void Eval_EvaluateSymbol(object sender, SymbolEventArgs e)
     switch (e.Name)
     {
         case "two":
-            e.Result = 2;
+            e.Result.SetValue(2);
             break;
         case "three":
-            e.Result = 3;
+            e.Result.SetValue(3);
             break;
         case "five":
-            e.Result = 5;
+            e.Result.SetValue(5);
             break;
         default:
             e.Status = SymbolStatus.UndefinedSymbol;
