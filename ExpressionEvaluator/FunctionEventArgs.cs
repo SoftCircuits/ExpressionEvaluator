@@ -1,8 +1,8 @@
-﻿// Copyright (c) 2019 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2019-2020 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
+
 using System;
-using System.Collections.Generic;
 
 namespace SoftCircuits.ExpressionEvaluator
 {
@@ -13,12 +13,29 @@ namespace SoftCircuits.ExpressionEvaluator
         WrongParameterCount,
     }
 
-    // ProcessFunction arguments
+    /// <summary>
+    /// Represents the argument object passed to the ProcessFunction event.
+    /// </summary>
     public class FunctionEventArgs : EventArgs
     {
+        /// <summary>
+        /// The name of this function.
+        /// </summary>
         public string Name { get; set; }
-        public double[] Parameters { get; set; }
-        public double Result { get; set; }
+
+        /// <summary>
+        /// Parameters passed to this function.
+        /// </summary>
+        public Variable[] Parameters { get; set; }
+
+        /// <summary>
+        /// Returns the resulting value.
+        /// </summary>
+        public Variable Result { get; set; }
+
+        /// <summary>
+        /// Returns the resulting status.
+        /// </summary>
         public FunctionStatus Status { get; set; }
     }
 }

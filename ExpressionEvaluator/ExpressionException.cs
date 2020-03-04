@@ -1,6 +1,7 @@
-﻿// Copyright (c) 2019 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2019-2020 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
+
 using System;
 
 namespace SoftCircuits.ExpressionEvaluator
@@ -13,7 +14,7 @@ namespace SoftCircuits.ExpressionEvaluator
         public int Index { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Constructs an ExpressionException instance.
         /// </summary>
         /// <param name="message">Message that describes this exception</param>
         /// <param name="position">Position within expression where exception occurred</param>
@@ -24,7 +25,7 @@ namespace SoftCircuits.ExpressionEvaluator
         }
 
         /// <summary>
-        /// 
+        /// Constructs an ExpressionException instance.
         /// </summary>
         /// <param name="format"></param>
         /// <param name="argument"></param>

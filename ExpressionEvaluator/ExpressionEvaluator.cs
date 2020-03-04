@@ -1,6 +1,7 @@
-﻿// Copyright (c) 2019 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2019-2020 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
+using SoftCircuits.Parsing.Helper;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -52,7 +53,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         /// <param name="expression">The expression to evaluate.</param>
         /// <returns>Returns the numeric result of the expression.</returns>
-        public double Evaluate(string expression)
+        public Variable Evaluate(string expression)
         {
             return EvaluateTokens(TokenizeExpression(expression));
         }
@@ -63,19 +64,19 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         /// <param name="expression">Expression to evaluate.</param>
         /// <returns>List of tokens in postfix order.</returns>
-        private List<Token> TokenizeExpression(string expression)
+        private List<IToken> TokenizeExpression(string expression)
         {
             ParsingHelper parser = new ParsingHelper(expression);
-            List<Token> tokens = new List<Token>();
-            Stack<Token> stack = new Stack<Token>();
+            List<IToken> tokens = new List<IToken>();
+            Stack<IToken> stack = new Stack<IToken>();
             State state = State.None;
             int parenCount = 0;
-            Token token;
+            IToken token;
 
             while (!parser.EndOfText)
             {
                 // Skip spaces, tabs, etc.
-                parser.SkipWhitespace();
+                parser.SkipWhiteSpace();
                 // Get next character
                 char c = parser.Peek();
                 if (c == '(')
@@ -171,9 +172,9 @@ namespace SoftCircuits.ExpressionEvaluator
                     string symbol = parser.ParseWhile(IsSymbolChar);
 
                     // Skip whitespace
-                    parser.SkipWhitespace();
+                    parser.SkipWhiteSpace();
                     // Check for parameter list
-                    double result;
+                    Variable result;
                     if (parser.Peek() == '(')
                     {
                         // Found parameter list, evaluate function
@@ -189,12 +190,19 @@ namespace SoftCircuits.ExpressionEvaluator
                     // Don't MoveAhead again
                     continue;
                 }
+                else if (c == '"' || c == '\'')
+                {
+                    // String literal
+                    string text = parser.ParseQuotedText();
+                    tokens.Add(new OperandToken(new Variable(text)));
+                    state = State.Operand;
+                }
                 else
                 {
                     // Unrecognized character
                     throw new ExpressionException(ErrUnexpectedCharacter, c, parser.Index);
                 }
-                parser.MoveAhead();
+                parser++;
             }
             // Expression cannot end with operator
             if (state == State.Operator || state == State.UnaryOperator)
@@ -213,7 +221,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         /// <param name="parser">Current parsing helper object.</param>
         /// <returns>The extracted number token string.</returns>
-        private double ParseNumber(ParsingHelper parser)
+        private Variable ParseNumber(ParsingHelper parser)
         {
             Debug.Assert(IsNumberChar(parser.Peek()));
 
@@ -227,14 +235,16 @@ namespace SoftCircuits.ExpressionEvaluator
                         throw new ExpressionException(ErrMultipleDecimalPoints, parser.Index);
                     hasDecimal = true;
                 }
-                parser.MoveAhead();
+                parser++;
             }
             // Extract token
             string token = parser.Extract(start, parser.Index);
             if (token == ".")
                 throw new ExpressionException(ErrInvalidOperand, parser.Index - 1);
 
-            return double.Parse(token);
+            if (hasDecimal)
+                return new Variable(double.Parse(token));
+            return new Variable(int.Parse(token));
         }
 
         /// <summary>
@@ -243,13 +253,13 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <param name="name">Name of symbol.</param>
         /// <param name="pos">Position at start of symbol.</param>
         /// <returns></returns>
-        protected double ParseSymbol(string name, int pos)
+        protected Variable ParseSymbol(string name, int pos)
         {
             // Create event args
             SymbolEventArgs args = new SymbolEventArgs
             {
                 Name = name,
-                Result = default,
+                Result = new Variable(),
                 Status = SymbolStatus.OK,
             };
 
@@ -272,13 +282,13 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <param name="name">Name of function.</param>
         /// <param name="pos">Position at start of function.</param>
         /// <returns></returns>
-        private double ParseFunction(ParsingHelper parser, string name, int pos)
+        private Variable ParseFunction(ParsingHelper parser, string name, int pos)
         {
             FunctionEventArgs args = new FunctionEventArgs
             {
                 Name = name,
                 Parameters = ParseParameters(parser),
-                Result = default,
+                Result = new Variable(),
                 Status = FunctionStatus.OK,
             };
 
@@ -302,13 +312,13 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         /// <param name="parser">ParsingHelper object.</param>
         /// <returns>A list of parameter values.</returns>
-        private double[] ParseParameters(ParsingHelper parser)
+        private Variable[] ParseParameters(ParsingHelper parser)
         {
-            List<double> parameters = new List<double>();
+            List<Variable> parameters = new List<Variable>();
 
             // Move past open parenthesis
-            parser.MoveAhead();
-            parser.SkipWhitespace();
+            parser++;
+            parser.SkipWhiteSpace();
             // If function has any parameters
             if (parser.Peek() != ')')
             {
@@ -341,14 +351,14 @@ namespace SoftCircuits.ExpressionEvaluator
                     {
                         parenCount++;
                     }
-                    parser.MoveAhead();
+                    parser++;
                 }
             }
             // Make sure we found a closing parenthesis
             if (parser.Peek() != ')')
                 throw new ExpressionException(ErrClosingParenExpected, parser.Index);
             // Move past closing parenthesis
-            parser.MoveAhead();
+            parser++;
             // Return parameter list
             return parameters.ToArray();
         }
@@ -361,7 +371,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <param name="parser">ParsingHelper object.</param>
         /// <param name="start">Index where current parameter starts.</param>
         /// <returns>The parameter value.</returns>
-        private double ParseParameter(ParsingHelper parser, int start)
+        private Variable ParseParameter(ParsingHelper parser, int start)
         {
             try
             {
@@ -383,12 +393,12 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         /// <param name="tokens">List of tokens to evaluate.</param>
         /// <returns>The result of all tokens.</returns>
-        private double EvaluateTokens(List<Token> tokens)
+        private Variable EvaluateTokens(List<IToken> tokens)
         {
-            Stack<double> stack = new Stack<double>();
+            Stack<Variable> stack = new Stack<Variable>();
 
             Debug.Assert(tokens.All(t => t.Type == TokenType.Operand || t.Type == TokenType.Operator));
-            foreach (Token token in tokens)
+            foreach (IToken token in tokens)
             {
                 if (token is OperandToken operandToken)
                     stack.Push(operandToken.Value);
@@ -397,7 +407,7 @@ namespace SoftCircuits.ExpressionEvaluator
             }
             // Remaining item on stack contains result
             Debug.Assert(stack.Count == 1);
-            return (stack.Count > 0) ? stack.Pop() : 0.0;
+            return (stack.Count > 0) ? stack.Pop() : new Variable();
         }
     }
 }

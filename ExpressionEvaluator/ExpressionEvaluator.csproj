@@ -7,25 +7,37 @@
     <PackageId>SoftCircuits.ExpressionEvaluator</PackageId>
     <Authors>Jonathan Wood</Authors>
     <Company>SoftCircuits</Company>
-    <Copyright>Copyright © 2019 SoftCircuits</Copyright>
+    <Copyright>Copyright © 2019-2020 SoftCircuits</Copyright>
     <PackageProjectUrl>https://github.com/SoftCircuits/ExpressionEvaluator</PackageProjectUrl>
     <RepositoryUrl>https://github.com/SoftCircuits/ExpressionEvaluator</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>expression evaluator expression-evaluator parser symbol function</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageReleaseNotes>Reworked the code internally; Added some additional cases to unit tests; Miscellaneous tweaks; BREAKING CHANGES: Renamed ProcessSymbol event to EvaluateSymbol; Renamed ProcessFunction event to EvaluateFunction; Changed FunctionEventArgs.Parameters from List&lt;T&gt; to array.</PackageReleaseNotes>
+    <PackageReleaseNotes>Now supports strings in expressions (using single or double quotes); Reworked unit tests and documentation; Added package icon.</PackageReleaseNotes>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <Description>Expression evaluator that will evaluate a string that contains an expression and return the result of that expression. Expressions can include parentheses to control evaluation priorities and the currently supported operators are "+", "-", "*", "/" and "%".
-
-In addition, expressions can contain symbols and functions, and functions arguments can be expressions that also include symbols and functions. When the evaluator encounters a symbol or function, it will raise the EvaluateSymbol or EvaluateFunction event.</Description>
-    <Version>1.0.1</Version>
+    <Description>.NET library that will evaluate a string expression. Supports custom functions and symbols. Expressions operands can include integers, doubles or strings. Operators can include "+", "-", "*", "/", "%" or "&amp;". Provides easy integration with any application.</Description>
+    <Version>2.0.0</Version>
+    <PackageIcon>Logo_64x64.png</PackageIcon>
+    <PackageIconUrl />
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ParsingHelper.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\License.txt">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+    <None Include="..\Logo_64x64.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SoftCircuits.Parsing.Helper" Version="1.0.10" />
   </ItemGroup>
 
 </Project>

@@ -1,12 +1,12 @@
-﻿// Copyright (c) 2019 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2019-2020 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
 namespace SoftCircuits.ExpressionEvaluator
 {
-    internal class LeftParenthesisToken : Token
+    internal class LeftParenthesisToken : IToken
     {
-        public override TokenType Type => TokenType.LeftParenthesis;
-        public override int Precedence => 0;
+        public TokenType Type => TokenType.LeftParenthesis;
+        public int Precedence => 0;
     }
 }

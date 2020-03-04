@@ -1,27 +1,14 @@
-﻿// Copyright (c) 2019 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2019-2020 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace SoftCircuits.ExpressionEvaluator
 {
-    internal class OperatorInfo
-    {
-        public char Operator { get; set; }
-        public int Precedence { get; set; }
-        public Action<Stack<double>> Evaluator { get; set; }
-
-        public OperatorInfo(char @operator, int precedence, Action<Stack<double>> evaluator)
-        {
-            Operator = @operator;
-            Precedence = precedence;
-            Evaluator = evaluator;
-        }
-    }
-
-    internal class OperatorToken : Token
+    internal class OperatorToken : IToken
     {
 
         #region Static Declarations
@@ -31,8 +18,8 @@ namespace SoftCircuits.ExpressionEvaluator
         public const char OpMultiply = '*';
         public const char OpDivide = '/';
         public const char OpRemainder = '%';
-        // Use otherwise unused character to represent unary minus
-        public const char OpNegate = '\uffff';
+        public const char OpConcatenate = '&';
+        public const char OpNegate = '\uffff';  // Represents unary minus
 
         public static readonly Dictionary<char, OperatorInfo> OperatorLookup = new Dictionary<char, OperatorInfo>
         {
@@ -41,6 +28,7 @@ namespace SoftCircuits.ExpressionEvaluator
             [OpMultiply] = new OperatorInfo(OpMultiply, 2, EvalMultiply),
             [OpDivide] = new OperatorInfo(OpDivide, 2, EvalDivide),
             [OpRemainder] = new OperatorInfo(OpRemainder, 2, EvalRemainder),
+            [OpConcatenate] = new OperatorInfo(OpConcatenate, 1, EvalConcatenate),
             [OpNegate] = new OperatorInfo(OpNegate, 10, EvalNegate),
         };
 
@@ -58,11 +46,11 @@ namespace SoftCircuits.ExpressionEvaluator
 
         private OperatorInfo Info;
 
-        public override TokenType Type => TokenType.Operator;
+        public TokenType Type => TokenType.Operator;
 
-        public override int Precedence => Info.Precedence;
+        public int Precedence => Info.Precedence;
         public char Operator => Info.Operator;
-        public Action<Stack<double>> Evaluator => Info.Evaluator;
+        public Action<Stack<Variable>> Evaluator => Info.Evaluator;
 
         /// <summary>
         /// Constructs a new <see cref="OperatorToken"></see> instance.
@@ -88,50 +76,66 @@ namespace SoftCircuits.ExpressionEvaluator
 
         #region Evaluators
 
-        private static void EvalAdd(Stack<double> stack)
+        private static void EvalAdd(Stack<Variable> stack)
         {
             Debug.Assert(stack.Count >= 2);
-            double value2 = stack.Pop();
-            double value1 = stack.Pop();
-            stack.Push(value1 + value2);
+            Variable var2 = stack.Pop();
+            Variable var1 = stack.Pop();
+            var1.Add(var2);
+            stack.Push(var1);
         }
 
-        private static void EvalSubtract(Stack<double> stack)
+        private static void EvalSubtract(Stack<Variable> stack)
         {
             Debug.Assert(stack.Count >= 2);
-            double value2 = stack.Pop();
-            double value1 = stack.Pop();
-            stack.Push(value1 - value2);
+            Variable var2 = stack.Pop();
+            Variable var1 = stack.Pop();
+            var1.Subtract(var2);
+            stack.Push(var1);
         }
 
-        private static void EvalMultiply(Stack<double> stack)
+        private static void EvalMultiply(Stack<Variable> stack)
         {
             Debug.Assert(stack.Count >= 2);
-            double value2 = stack.Pop();
-            double value1 = stack.Pop();
-            stack.Push(value1 * value2);
+            Variable var2 = stack.Pop();
+            Variable var1 = stack.Pop();
+            var1.Multiply(var2);
+            stack.Push(var1);
         }
 
-        private static void EvalDivide(Stack<double> stack)
+        private static void EvalDivide(Stack<Variable> stack)
         {
             Debug.Assert(stack.Count >= 2);
-            double value2 = stack.Pop();
-            double value1 = stack.Pop();
-            stack.Push(value1 / value2);
+            Variable var2 = stack.Pop();
+            Variable var1 = stack.Pop();
+            var1.Divide(var2);
+            stack.Push(var1);
         }
 
-        private static void EvalRemainder(Stack<double> stack)
+        private static void EvalRemainder(Stack<Variable> stack)
         {
             Debug.Assert(stack.Count >= 2);
-            double value2 = stack.Pop();
-            double value1 = stack.Pop();
-            stack.Push(value1 % value2);
+            Variable var2 = stack.Pop();
+            Variable var1 = stack.Pop();
+            var1.Remainder(var2);
+            stack.Push(var1);
         }
 
-        private static void EvalNegate(Stack<double> stack)
+        private static void EvalConcatenate(Stack<Variable> stack)
+        {
+            Debug.Assert(stack.Count >= 2);
+            Variable var2 = stack.Pop();
+            Variable var1 = stack.Pop();
+            var1.Concatenate(var2);
+            stack.Push(var1);
+        }
+
+        private static void EvalNegate(Stack<Variable> stack)
         {
             Debug.Assert(stack.Count >= 1);
-            stack.Push(-stack.Pop());
+            Variable var1 = stack.Pop();
+            var1.Negate();
+            stack.Push(var1);
         }
 
         #endregion
