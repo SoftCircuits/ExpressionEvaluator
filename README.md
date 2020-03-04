@@ -27,7 +27,7 @@ v = eval.Evaluate("(2 + 3) * 5"));  // Returns 25
 
 Note that `Variable` data type. This type can hold integer, double or string data. `Variable` objects have a number of methods to retrieve and set values.
 
-The library also supports expressions that contain strings.
+The library also supports expressions that contain strings. Strings can be any text enclosed in either double or single quotes. If the string contains two quotes together, they will be interpreted as a single quote character rather than the end of the string.
 
 ```cs
 ExpressionEvaluator eval = new ExpressionEvaluator();
