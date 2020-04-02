@@ -42,6 +42,9 @@ namespace ExpressionEvaluatorTests
             Assert.AreEqual(46, eval.Evaluate("'12' + '34'").ToInteger());
             Assert.AreEqual("0", eval.Evaluate("'abc' + 'def'").ToString());
             Assert.AreEqual("abcdef", eval.Evaluate("'abc' & 'def'").ToString());
+
+            Assert.AreEqual(VariableType.Integer, eval.Evaluate("\"2\" + \"2\"").Type);
+            Assert.AreEqual(VariableType.Double, eval.Evaluate("\"2.5\" + \"2.6\"").Type);
         }
 
         [TestMethod]

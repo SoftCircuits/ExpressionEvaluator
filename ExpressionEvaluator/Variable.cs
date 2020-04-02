@@ -497,9 +497,9 @@ namespace SoftCircuits.ExpressionEvaluator
 
             // Set result
             if (isFloat1 || isFloat2)
-                SetValue((int)val1);
-            else
                 SetValue(val1);
+            else
+                SetValue((int)val1);
         }
 
         /// <summary>
