@@ -33,7 +33,7 @@ Variable v;
 
 v = eval.Evaluate("\"2\" & \"2\"");  // Returns 22 (String)
 v = eval.Evaluate("'2' & '2'");      // Returns 22 (String)
-v = eval.Evaluate("\"2\" + \"2\"");  // Returns 4  (Double)
+v = eval.Evaluate("\"2\" + \"2\"");  // Returns 4  (Integer)
 ```
 
 Note the concatenation operator (`&`). This operator converts both operands to a string (if needed) and then concatenates them.
