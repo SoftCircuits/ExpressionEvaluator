@@ -148,6 +148,8 @@ namespace ExpressionEvaluatorTests
             Assert.AreEqual(32, v2);
             v2 = v % v2;
             Assert.AreEqual(4, v2);
+            v2 = v % 0;
+            Assert.AreEqual(0, v2);
 
             v2 = v & 1;
             Assert.AreEqual("1001", v2);

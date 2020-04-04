@@ -13,10 +13,10 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>expression evaluator expression-evaluator parser symbol function</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageReleaseNotes>Fixed minor issue interpreting string values as Integer vs Double; Expanded unit tests.</PackageReleaseNotes>
+    <PackageReleaseNotes>Reworked Variable code; Added tests.</PackageReleaseNotes>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Description>.NET library that will evaluate a string expression. Supports custom functions and symbols. Expressions operands can include integers, doubles or strings. Operators can include "+", "-", "*", "/", "%" or "&amp;". Provides easy integration with any application.</Description>
-    <Version>2.0.2</Version>
+    <Version>2.0.3</Version>
     <PackageIcon>Logo_64x64.png</PackageIcon>
     <PackageIconUrl />
   </PropertyGroup>
