@@ -56,15 +56,15 @@ public void Test()
 
 private void Eval_EvaluateSymbol(object sender, SymbolEventArgs e)
 {
-    switch (e.Name)
+    switch (e.Name.ToUpper())
     {
-        case "two":
+        case "TWO":
             e.Result.SetValue(2);
             break;
-        case "three":
+        case "THREE":
             e.Result.SetValue(3);
             break;
-        case "five":
+        case "FIVE":
             e.Result.SetValue(5);
             break;
         default:
@@ -92,15 +92,15 @@ void Test()
 
 private void Eval_EvaluateFunction(object sender, FunctionEventArgs e)
 {
-    switch (e.Name)
+    switch (e.Name.ToUpper())
     {
-        case "add":
+        case "ADD":
             if (e.Parameters.Length == 2)
                 e.Result.SetValue(e.Parameters[0] + e.Parameters[1]);
             else
                 e.Status = FunctionStatus.WrongParameterCount;
             break;
-        case "multiply":
+        case "MULTIPLY":
             if (e.Parameters.Length == 2)
                 e.Result.SetValue(e.Parameters[0] * e.Parameters[1]);
             else
