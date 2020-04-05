@@ -43,8 +43,17 @@ namespace ExpressionEvaluatorTests
             Assert.AreEqual("0", eval.Evaluate("'abc' + 'def'").ToString());
             Assert.AreEqual("abcdef", eval.Evaluate("'abc' & 'def'").ToString());
 
+            Assert.AreEqual(1, eval.Evaluate("'abc' + 1"));
+            Assert.AreEqual(-1, eval.Evaluate("'abc' - 1"));
+            Assert.AreEqual(0, eval.Evaluate("'abc' * 1"));
+            Assert.AreEqual(0, eval.Evaluate("'abc' / 1"));
+            Assert.AreEqual(0, eval.Evaluate("'abc' % 1"));
+            Assert.AreEqual("abc", eval.Evaluate("-'abc'"));
+            Assert.AreEqual("abc1", eval.Evaluate("'abc' & 1"));
+
             Assert.AreEqual(VariableType.Integer, eval.Evaluate("\"2\" + \"2\"").Type);
             Assert.AreEqual(VariableType.Double, eval.Evaluate("\"2.5\" + \"2.6\"").Type);
+            Assert.AreEqual(VariableType.String, eval.Evaluate("2.5 & 2.6").Type);
         }
 
         [TestMethod]

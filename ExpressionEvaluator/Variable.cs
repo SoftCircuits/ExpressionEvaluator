@@ -207,12 +207,12 @@ namespace SoftCircuits.ExpressionEvaluator
         {
             if (GetNumericValue(out double v, out bool isFloat))
             {
-                v += value;
                 if (isFloat)
-                    SetValue(v);
+                    SetValue(v + value);
                 else
-                    SetValue((int)v);
+                    SetValue((int)v + value);
             }
+            else SetValue(value);
         }
 
         /// <summary>
@@ -258,12 +258,12 @@ namespace SoftCircuits.ExpressionEvaluator
         {
             if (GetNumericValue(out double v, out bool isFloat))
             {
-                v -= value;
                 if (isFloat)
-                    SetValue(v);
+                    SetValue(v - value);
                 else
-                    SetValue((int)v);
+                    SetValue((int)v - value);
             }
+            else SetValue(-value);
         }
 
         /// <summary>
@@ -309,12 +309,12 @@ namespace SoftCircuits.ExpressionEvaluator
         {
             if (GetNumericValue(out double v, out bool isFloat))
             {
-                v *= value;
                 if (isFloat)
-                    SetValue(v);
+                    SetValue(v * value);
                 else
-                    SetValue((int)v);
+                    SetValue((int)v * value);
             }
+            else SetValue(0);
         }
 
         /// <summary>
@@ -360,12 +360,12 @@ namespace SoftCircuits.ExpressionEvaluator
         {
             if (GetNumericValue(out double v, out bool isFloat))
             {
-                v = (value == 0) ? 0 : v / value;
                 if (isFloat)
-                    SetValue(v);
+                    SetValue((value == 0) ? 0 : v / value);
                 else
-                    SetValue((int)v);
+                    SetValue((value == 0) ? 0 : (int)v / value);
             }
+            else SetValue(0);
         }
 
         /// <summary>
@@ -411,12 +411,12 @@ namespace SoftCircuits.ExpressionEvaluator
         {
             if (GetNumericValue(out double v, out bool isFloat))
             {
-                v = (value == 0) ? 0 : v % value;
                 if (isFloat)
-                    SetValue(v);
+                    SetValue((value == 0) ? 0 : v % value);
                 else
-                    SetValue((int)v);
+                    SetValue((value == 0) ? 0 : (int)v % value);
             }
+            else SetValue(0);
         }
 
         /// <summary>
