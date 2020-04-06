@@ -51,6 +51,11 @@ namespace ExpressionEvaluatorTests
             Assert.AreEqual("abc", eval.Evaluate("-'abc'"));
             Assert.AreEqual("abc1", eval.Evaluate("'abc' & 1"));
 
+            Assert.AreEqual(123, eval.Evaluate("123"));
+            Assert.AreEqual(123, eval.Evaluate("\"123\""));
+            Assert.AreEqual("123", eval.Evaluate("123"));
+            Assert.AreEqual("123", eval.Evaluate("\"123\""));
+
             Assert.AreEqual(VariableType.Integer, eval.Evaluate("\"2\" + \"2\"").Type);
             Assert.AreEqual(VariableType.Double, eval.Evaluate("\"2.5\" + \"2.6\"").Type);
             Assert.AreEqual(VariableType.String, eval.Evaluate("2.5 & 2.6").Type);
@@ -64,13 +69,18 @@ namespace ExpressionEvaluatorTests
 
             // Conversion operators
             v.SetValue("12345.6");
-            Assert.AreEqual(12346, v);
-            Assert.AreEqual(12345.6, v);
-            Assert.AreEqual("12345.6", v);
+            Assert.IsTrue(12346 == v);
+            Assert.IsTrue(12345.6 == v);
+            Assert.IsTrue("12345.6" == v);
+            Assert.IsTrue(v == 12346);
+            Assert.IsTrue(v == 12345.6);
+            Assert.IsTrue(v == "12345.6");
+            Assert.IsFalse(12346 != v);
+            Assert.IsFalse(12345.6 != v);
+            Assert.IsFalse("12345.6" != v);
 
             // Comparison operators
             v.SetValue(100);
-
             Assert.IsTrue(v == 100);
             Assert.IsFalse(v == 47);
             Assert.IsTrue(v != 1087);
@@ -85,7 +95,6 @@ namespace ExpressionEvaluatorTests
             Assert.IsFalse(v >= 3980);
 
             v.SetValue("abc");
-
             Assert.IsTrue(v == "abc");
             Assert.IsFalse(v == "def");
             Assert.IsTrue(v != "def");
@@ -229,15 +238,15 @@ namespace ExpressionEvaluatorTests
 
         private void Eval_EvaluateSymbol(object sender, SymbolEventArgs e)
         {
-            switch (e.Name)
+            switch (e.Name.ToUpper())
             {
-                case "two":
+                case "TWO":
                     e.Result.SetValue(2);
                     break;
-                case "three":
+                case "THREE":
                     e.Result.SetValue(3);
                     break;
-                case "five":
+                case "FIVE":
                     e.Result.SetValue(5);
                     break;
                 default:
@@ -248,9 +257,9 @@ namespace ExpressionEvaluatorTests
 
         private void Eval_EvaluateFunction(object sender, FunctionEventArgs e)
         {
-            switch (e.Name)
+            switch (e.Name.ToUpper())
             {
-                case "add":
+                case "ADD":
                     if (e.Parameters.Length == 2)
                     {
                         e.Parameters[0].Add(e.Parameters[1]);
@@ -259,7 +268,7 @@ namespace ExpressionEvaluatorTests
                     else
                         e.Status = FunctionStatus.WrongParameterCount;
                     break;
-                case "multiply":
+                case "MULTIPLY":
                     if (e.Parameters.Length == 2)
                     {
                         e.Parameters[0].Multiply(e.Parameters[1]);

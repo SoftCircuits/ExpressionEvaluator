@@ -199,50 +199,61 @@ namespace SoftCircuits.ExpressionEvaluator
 
         #region Operations
 
-        /// <summary>
-        /// Adds the give value to this Variable.
-        /// </summary>
-        /// <param name="value">The value to be added.</param>
-        public void Add(int value)
+        private enum NumericType
         {
-            if (GetNumericValue(out double v, out bool isFloat))
-            {
-                if (isFloat)
-                    SetValue(v + value);
-                else
-                    SetValue((int)v + value);
-            }
-            else SetValue(value);
+            None,
+            Integer,
+            Double,
         }
 
         /// <summary>
         /// Adds the give value to this Variable.
         /// </summary>
-        /// <param name="value">The value to be added.</param>
-        public void Add(double value) => SetValue(ToDouble() + value);
-
-        /// <summary>
-        /// Adds the give value to this Variable.
-        /// </summary>
-        /// <param name="value">The value to be added.</param>
-        public void Add(string value) => CalculateWithString(value, (x, y) => x + y);
-
-        /// <summary>
-        /// Adds the give value to this Variable.
-        /// </summary>
-        /// <param name="value">The value to be added.</param>
-        public void Add(Variable value)
+        /// <param name="operand">The value to be added.</param>
+        public void Add(int operand)
         {
-            switch (value.Type)
+            switch (GetNumericValue(out double value))
+            {
+                case NumericType.None:
+                    SetValue(operand);
+                    break;
+                case NumericType.Integer:
+                    SetValue((int)value + operand);
+                    break;
+                case NumericType.Double:
+                    SetValue(value + operand);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Adds the give value to this Variable.
+        /// </summary>
+        /// <param name="operand">The value to be added.</param>
+        public void Add(double operand) => SetValue(ToDouble() + operand);
+
+        /// <summary>
+        /// Adds the give value to this Variable.
+        /// </summary>
+        /// <param name="operand">The value to be added.</param>
+        public void Add(string operand) => CalculateStringOperand(operand, (val, op) => val + op);
+
+        /// <summary>
+        /// Adds the give value to this Variable.
+        /// </summary>
+        /// <param name="operand">The value to be added.</param>
+        public void Add(Variable operand)
+        {
+            switch (operand.Type)
             {
                 case VariableType.Integer:
-                    Add(value.IntegerValue);
+                    Add(operand.IntegerValue);
                     break;
                 case VariableType.Double:
-                    Add(value.DoubleValue);
+                    Add(operand.DoubleValue);
                     break;
                 case VariableType.String:
-                    Add(value.StringValue);
+                    Add(operand.StringValue);
                     break;
                 default:
                     Debug.Assert(false);
@@ -251,49 +262,53 @@ namespace SoftCircuits.ExpressionEvaluator
         }
 
         /// <summary>
-        /// Subtracts the give value to this Variable.
+        /// Subtracts the given value to this Variable.
         /// </summary>
-        /// <param name="value">The value to be subtracted.</param>
-        public void Subtract(int value)
+        /// <param name="operand">The value to be subtracted.</param>
+        public void Subtract(int operand)
         {
-            if (GetNumericValue(out double v, out bool isFloat))
+            switch (GetNumericValue(out double value))
             {
-                if (isFloat)
-                    SetValue(v - value);
-                else
-                    SetValue((int)v - value);
+                case NumericType.None:
+                    SetValue(-operand);
+                    break;
+                case NumericType.Integer:
+                    SetValue((int)value - operand);
+                    break;
+                case NumericType.Double:
+                    SetValue(value - operand);
+                    break;
             }
-            else SetValue(-value);
         }
 
         /// <summary>
-        /// Subtracts the give value to this Variable.
+        /// Subtracts the given value to this Variable.
         /// </summary>
-        /// <param name="value">The value to be subtracted.</param>
-        public void Subtract(double value) => SetValue(ToDouble() - value);
+        /// <param name="operand">The value to be subtracted.</param>
+        public void Subtract(double operand) => SetValue(ToDouble() - operand);
 
         /// <summary>
-        /// Subtracts the give value to this Variable.
+        /// Subtracts the given value to this Variable.
         /// </summary>
-        /// <param name="value">The value to be subtracted.</param>
-        public void Subtract(string value) => CalculateWithString(value, (x, y) => x - y);
+        /// <param name="operand">The value to be subtracted.</param>
+        public void Subtract(string operand) => CalculateStringOperand(operand, (val, op) => val - op);
 
         /// <summary>
-        /// Subtracts the give value to this Variable.
+        /// Subtracts the given value to this Variable.
         /// </summary>
-        /// <param name="value">The value to be subtracted.</param>
-        public void Subtract(Variable value)
+        /// <param name="operand">The value to be subtracted.</param>
+        public void Subtract(Variable operand)
         {
-            switch (value.Type)
+            switch (operand.Type)
             {
                 case VariableType.Integer:
-                    Subtract(value.IntegerValue);
+                    Subtract(operand.IntegerValue);
                     break;
                 case VariableType.Double:
-                    Subtract(value.DoubleValue);
+                    Subtract(operand.DoubleValue);
                     break;
                 case VariableType.String:
-                    Subtract(value.StringValue);
+                    Subtract(operand.StringValue);
                     break;
                 default:
                     Debug.Assert(false);
@@ -304,47 +319,51 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <summary>
         /// Multiplies this Variable by the given value.
         /// </summary>
-        /// <param name="value">The value by which to multiply.</param>
-        public void Multiply(int value)
+        /// <param name="operand">The value by which to multiply.</param>
+        public void Multiply(int operand)
         {
-            if (GetNumericValue(out double v, out bool isFloat))
+            switch (GetNumericValue(out double value))
             {
-                if (isFloat)
-                    SetValue(v * value);
-                else
-                    SetValue((int)v * value);
+                case NumericType.None:
+                    SetValue(0);
+                    break;
+                case NumericType.Integer:
+                    SetValue((int)value * operand);
+                    break;
+                case NumericType.Double:
+                    SetValue(value * operand);
+                    break;
             }
-            else SetValue(0);
         }
 
         /// <summary>
         /// Multiplies this Variable by the given value.
         /// </summary>
-        /// <param name="value">The value by which to multiply.</param>
-        public void Multiply(double value) => SetValue(ToDouble() * value);
+        /// <param name="operand">The value by which to multiply.</param>
+        public void Multiply(double operand) => SetValue(ToDouble() * operand);
 
         /// <summary>
         /// Multiplies this Variable by the given value.
         /// </summary>
-        /// <param name="value">The value by which to multiply.</param>
-        public void Multiply(string value) => CalculateWithString(value, (x, y) => x * y);
+        /// <param name="operand">The value by which to multiply.</param>
+        public void Multiply(string operand) => CalculateStringOperand(operand, (val, op) => val * op);
 
         /// <summary>
         /// Multiplies this Variable by the given value.
         /// </summary>
-        /// <param name="value">The value by which to multiply.</param>
-        public void Multiply(Variable value)
+        /// <param name="operand">The value by which to multiply.</param>
+        public void Multiply(Variable operand)
         {
-            switch (value.Type)
+            switch (operand.Type)
             {
                 case VariableType.Integer:
-                    Multiply(value.IntegerValue);
+                    Multiply(operand.IntegerValue);
                     break;
                 case VariableType.Double:
-                    Multiply(value.DoubleValue);
+                    Multiply(operand.DoubleValue);
                     break;
                 case VariableType.String:
-                    Multiply(value.StringValue);
+                    Multiply(operand.StringValue);
                     break;
                 default:
                     Debug.Assert(false);
@@ -355,47 +374,51 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <summary>
         /// Divides this Variable by the given value. Returns zero if the divisor is zero.
         /// </summary>
-        /// <param name="value">The value by which to divide.</param>
-        public void Divide(int value)
+        /// <param name="operand">The value by which to divide.</param>
+        public void Divide(int operand)
         {
-            if (GetNumericValue(out double v, out bool isFloat))
+            switch (GetNumericValue(out double value))
             {
-                if (isFloat)
-                    SetValue((value == 0) ? 0 : v / value);
-                else
-                    SetValue((value == 0) ? 0 : (int)v / value);
+                case NumericType.None:
+                    SetValue(0);
+                    break;
+                case NumericType.Integer:
+                    SetValue((operand == 0) ? 0 : (int)value / operand);
+                    break;
+                case NumericType.Double:
+                    SetValue((operand == 0) ? 0 : value / operand);
+                    break;
             }
-            else SetValue(0);
         }
 
         /// <summary>
         /// Divides this Variable by the given value. Returns zero if the divisor is zero.
         /// </summary>
-        /// <param name="value">The value by which to divide.</param>
-        public void Divide(double value) => SetValue((value == 0) ? 0 : ToDouble() / value);
+        /// <param name="operand">The value by which to divide.</param>
+        public void Divide(double operand) => SetValue((operand == 0) ? 0 : ToDouble() / operand);
 
         /// <summary>
         /// Divides this Variable by the given value. Returns zero if the divisor is zero.
         /// </summary>
-        /// <param name="value">The value by which to divide.</param>
-        public void Divide(string value) => CalculateWithString(value, (x, y) => (y == 0) ? 0 : x / y);
+        /// <param name="operand">The value by which to divide.</param>
+        public void Divide(string operand) => CalculateStringOperand(operand, (val, op) => (op == 0) ? 0 : val / op);
 
         /// <summary>
         /// Divides this Variable by the given value. Returns zero if the divisor is zero.
         /// </summary>
-        /// <param name="value">The value by which to divide.</param>
-        public void Divide(Variable value)
+        /// <param name="operand">The value by which to divide.</param>
+        public void Divide(Variable operand)
         {
-            switch (value.Type)
+            switch (operand.Type)
             {
                 case VariableType.Integer:
-                    Divide(value.IntegerValue);
+                    Divide(operand.IntegerValue);
                     break;
                 case VariableType.Double:
-                    Divide(value.DoubleValue);
+                    Divide(operand.DoubleValue);
                     break;
                 case VariableType.String:
-                    Divide(value.StringValue);
+                    Divide(operand.StringValue);
                     break;
                 default:
                     Debug.Assert(false);
@@ -406,47 +429,51 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <summary>
         /// Divides this Variable by the given value. Returns zero if the divisor is zero.
         /// </summary>
-        /// <param name="value">The value by which to divide.</param>
-        public void Modulus(int value)
+        /// <param name="operand">The value by which to divide.</param>
+        public void Modulus(int operand)
         {
-            if (GetNumericValue(out double v, out bool isFloat))
+            switch (GetNumericValue(out double value))
             {
-                if (isFloat)
-                    SetValue((value == 0) ? 0 : v % value);
-                else
-                    SetValue((value == 0) ? 0 : (int)v % value);
+                case NumericType.None:
+                    SetValue(0);
+                    break;
+                case NumericType.Integer:
+                    SetValue((operand == 0) ? 0 : (int)value % operand);
+                    break;
+                case NumericType.Double:
+                    SetValue((operand == 0) ? 0 : value % operand);
+                    break;
             }
-            else SetValue(0);
         }
 
         /// <summary>
         /// Divides this Variable by the given value. Returns zero if the divisor is zero.
         /// </summary>
-        /// <param name="value">The value by which to divide.</param>
-        public void Modulus(double value) => SetValue((value == 0) ? 0 : ToDouble() % value);
+        /// <param name="operand">The value by which to divide.</param>
+        public void Modulus(double operand) => SetValue((operand == 0) ? 0 : ToDouble() % operand);
 
         /// <summary>
         /// Divides this Variable by the given value. Returns zero if the divisor is zero.
         /// </summary>
-        /// <param name="value">The value by which to divide.</param>
-        public void Modulus(string value) => CalculateWithString(value, (x, y) => (y == 0) ? 0 : x % y);
+        /// <param name="operand">The value by which to divide.</param>
+        public void Modulus(string operand) => CalculateStringOperand(operand, (val, op) => (op == 0) ? 0 : val % op);
 
         /// <summary>
         /// Divides this Variable by the given value. Returns zero if the divisor is zero.
         /// </summary>
-        /// <param name="value">The value by which to divide.</param>
-        public void Modulus(Variable value)
+        /// <param name="operand">The value by which to divide.</param>
+        public void Modulus(Variable operand)
         {
-            switch (value.Type)
+            switch (operand.Type)
             {
                 case VariableType.Integer:
-                    Modulus(value.IntegerValue);
+                    Modulus(operand.IntegerValue);
                     break;
                 case VariableType.Double:
-                    Modulus(value.DoubleValue);
+                    Modulus(operand.DoubleValue);
                     break;
                 case VariableType.String:
-                    Modulus(value.StringValue);
+                    Modulus(operand.StringValue);
                     break;
                 default:
                     Debug.Assert(false);
@@ -457,26 +484,26 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <summary>
         /// Concatenates two values together as strings.
         /// </summary>
-        /// <param name="value">The value to be concatenated.</param>
-        public void Concatenate(int value) => SetValue(ToString() + value.ToString());
+        /// <param name="operand">The value to be concatenated.</param>
+        public void Concatenate(int operand) => SetValue(ToString() + operand.ToString());
 
         /// <summary>
         /// Concatenates two values together as strings.
         /// </summary>
-        /// <param name="value">The value to be concatenated.</param>
-        public void Concatenate(double value) => SetValue(ToString() + value.ToString());
+        /// <param name="operand">The value to be concatenated.</param>
+        public void Concatenate(double operand) => SetValue(ToString() + operand.ToString());
 
         /// <summary>
         /// Concatenates two values together as strings.
         /// </summary>
-        /// <param name="value">The value to be concatenated.</param>
-        public void Concatenate(string value) => SetValue(ToString() + value);
+        /// <param name="operand">The value to be concatenated.</param>
+        public void Concatenate(string operand) => SetValue(ToString() + operand);
 
         /// <summary>
         /// Concatenates two values together as strings.
         /// </summary>
-        /// <param name="value">The value to be concatenated.</param>
-        public void Concatenate(Variable value) => SetValue(ToString() + value.ToString());
+        /// <param name="operand">The value to be concatenated.</param>
+        public void Concatenate(Variable operand) => SetValue(ToString() + operand.ToString());
 
         /// <summary>
         /// Negates the value of this Variable.
@@ -492,12 +519,16 @@ namespace SoftCircuits.ExpressionEvaluator
                     DoubleValue = -DoubleValue;
                     break;
                 case VariableType.String:
-                    if (GetNumericValue(StringValue, out double value, out bool isFloat))
+                    switch (GetNumericValue(StringValue, out double value))
                     {
-                        if (isFloat)
-                            SetValue(-value);
-                        else
+                        case NumericType.None:
+                            break;
+                        case NumericType.Integer:
                             SetValue(-(int)value);
+                            break;
+                        case NumericType.Double:
+                            SetValue(-value);
+                            break;
                     }
                     break;
                 default:
@@ -511,20 +542,20 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         /// <param name="s">The string value to use in the calculation.</param>
         /// <param name="calc">Delegate that performs the calculation.</param>
-        private void CalculateWithString(string s, Func<double, double, double> calc)
+        private void CalculateStringOperand(string s, Func<double, double, double> calc)
         {
             // Get values
-            GetNumericValue(out double val1, out bool isFloat1);
-            GetNumericValue(s, out double val2, out bool isFloat2);
+            var valType = GetNumericValue(out double value);
+            var opType = GetNumericValue(s, out double operand);
 
-            // Perform operation
-            double result = calc(val1, val2);
+            // Perform calculation
+            value = calc(value, operand);
 
             // Set result
-            if (isFloat1 || isFloat2)
-                SetValue(result);
+            if (valType == NumericType.Double || opType == NumericType.Double)
+                SetValue(value);
             else
-                SetValue((int)result);
+                SetValue((int)value);
         }
 
         /// <summary>
@@ -532,27 +563,23 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         /// <param name="value">Returns the current value, or 0 if this variable
         /// does not currently contain a numeric value.</param>
-        /// <param name="isFloat">Returns true if the value is a floating point.</param>
-        /// <returns>True if this Variable contains a numeric value.</returns>
-        private bool GetNumericValue(out double value, out bool isFloat)
+        /// <returns>Returns an enum indicating the number type.</returns>
+        private NumericType GetNumericValue(out double value)
         {
             switch (Type)
             {
                 case VariableType.Integer:
                     value = IntegerValue;
-                    isFloat = false;
-                    return true;
+                    return NumericType.Integer;
                 case VariableType.Double:
                     value = DoubleValue;
-                    isFloat = true;
-                    return true;
+                    return NumericType.Double;
                 case VariableType.String:
-                    return GetNumericValue(StringValue, out value, out isFloat);
+                    return GetNumericValue(StringValue, out value);
                 default:
                     Debug.Assert(false);
                     value = default;
-                    isFloat = default;
-                    return false;
+                    return NumericType.None;
             }
         }
 
@@ -562,30 +589,26 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <param name="s">The string to get the value of.</param>
         /// <param name="value">Returns the value of <paramref name="s"/>, or 0
         /// if it does not contain a value.</param>
-        /// <param name="isFloat">Returns true if the value is floating point.</param>
-        /// <returns>Returns true if the string contained a numeric value.</returns>
-        private static bool GetNumericValue(string s, out double value, out bool isFloat)
+        /// <returns>Returns an enum indicating the number type.</returns>
+        private static NumericType GetNumericValue(string s, out double value)
         {
             // Attempt to parse int
             if (int.TryParse(s, out int i))
             {
                 value = i;
-                isFloat = false;
-                return true;
+                return NumericType.Integer;
             }
 
             // Attempt to parse double
             if (double.TryParse(s, out double d))
             {
                 value = d;
-                isFloat = true;
-                return true;
+                return NumericType.Double;
             }
 
             // Not numeric
             value = default;
-            isFloat = default;
-            return false;
+            return NumericType.None;
         }
 
         #endregion
@@ -633,16 +656,20 @@ namespace SoftCircuits.ExpressionEvaluator
         private static double CompareStrings(Variable v1, Variable v2)
         {
             // Compare as numbers if possible
-            if (v1.GetNumericValue(out double value1, out bool _) && v2.GetNumericValue(out double value2, out bool _))
+            if (v1.GetNumericValue(out double value1) != NumericType.None &&
+                v2.GetNumericValue(out double value2) != NumericType.None)
                 return value1 - value2;
+            // Else compare as strings
             return string.CompareOrdinal(v1.ToString(), v2.ToString());
         }
 
         private static double CompareStrings(Variable v1, string v2)
         {
             // Compare as numbers if possible
-            if (v1.GetNumericValue(out double value1, out bool _) && GetNumericValue(v2, out double value2, out bool _))
+            if (v1.GetNumericValue(out double value1) != NumericType.None &&
+                GetNumericValue(v2, out double value2) != NumericType.None)
                 return value1 - value2;
+            // Else compare as strings
             return string.CompareOrdinal(v1.ToString(), v2);
         }
 
