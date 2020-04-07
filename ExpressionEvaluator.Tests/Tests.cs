@@ -38,18 +38,27 @@ namespace ExpressionEvaluatorTests
         public void TestStrings()
         {
             ExpressionEvaluator eval = new ExpressionEvaluator();
-            Assert.AreEqual("1234", eval.Evaluate("\"12\" & \"34\"").ToString());
-            Assert.AreEqual(46, eval.Evaluate("'12' + '34'").ToInteger());
-            Assert.AreEqual("0", eval.Evaluate("'abc' + 'def'").ToString());
-            Assert.AreEqual("abcdef", eval.Evaluate("'abc' & 'def'").ToString());
+            Assert.AreEqual("1234", eval.Evaluate("\"12\" & \"34\""));
+            Assert.AreEqual(46, eval.Evaluate("'12' + '34'"));
+            Assert.AreEqual("0", eval.Evaluate("'abc' + 'def'"));
+            Assert.AreEqual("abcdef", eval.Evaluate("'abc' & 'def'"));
 
-            Assert.AreEqual(1, eval.Evaluate("'abc' + 1"));
-            Assert.AreEqual(-1, eval.Evaluate("'abc' - 1"));
-            Assert.AreEqual(0, eval.Evaluate("'abc' * 1"));
-            Assert.AreEqual(0, eval.Evaluate("'abc' / 1"));
-            Assert.AreEqual(0, eval.Evaluate("'abc' % 1"));
+            Assert.IsTrue(eval.Evaluate("16") == "16.00");
+            Assert.IsTrue(eval.Evaluate("16.00") == "16");
+            Assert.IsTrue(eval.Evaluate("'16'") == "16.00");
+            Assert.IsTrue(eval.Evaluate("'16.00'") == "16");
+            Assert.IsFalse(eval.Evaluate("16") != "16.00");
+            Assert.IsFalse(eval.Evaluate("16.00") != "16");
+            Assert.IsFalse(eval.Evaluate("'16'") != "16.00");
+            Assert.IsFalse(eval.Evaluate("'16.00'") != "16");
+
+            Assert.AreEqual(5, eval.Evaluate("'abc' + 5"));
+            Assert.AreEqual(-5, eval.Evaluate("'abc' - 5"));
+            Assert.AreEqual(0, eval.Evaluate("'abc' * 5"));
+            Assert.AreEqual(0, eval.Evaluate("'abc' / 5"));
+            Assert.AreEqual(0, eval.Evaluate("'abc' % 5"));
             Assert.AreEqual("abc", eval.Evaluate("-'abc'"));
-            Assert.AreEqual("abc1", eval.Evaluate("'abc' & 1"));
+            Assert.AreEqual("abc5", eval.Evaluate("'abc' & 5"));
 
             Assert.AreEqual(123, eval.Evaluate("123"));
             Assert.AreEqual(123, eval.Evaluate("\"123\""));

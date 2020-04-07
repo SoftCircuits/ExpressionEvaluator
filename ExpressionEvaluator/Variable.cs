@@ -625,13 +625,13 @@ namespace SoftCircuits.ExpressionEvaluator
 
         public static bool operator ==(Variable v1, int v2) => v1.ToInteger() == v2;
         public static bool operator ==(Variable v1, double v2) => v1.ToDouble() == v2;
-        public static bool operator ==(Variable v1, string v2) => v1.ToString() == v2;
-        public static bool operator ==(Variable v1, Variable v2) => v1.ToString() == v2.ToString();
+        public static bool operator ==(Variable v1, string v2) => CompareStrings(v1, v2) == 0;
+        public static bool operator ==(Variable v1, Variable v2) => CompareStrings(v1, v2) == 0;
 
         public static bool operator !=(Variable v1, int v2) => v1.ToInteger() != v2;
         public static bool operator !=(Variable v1, double v2) => v1.ToDouble() != v2;
-        public static bool operator !=(Variable v1, string v2) => v1.ToString() != v2;
-        public static bool operator !=(Variable v1, Variable v2) => v1.ToString() != v2.ToString();
+        public static bool operator !=(Variable v1, string v2) => CompareStrings(v1, v2) != 0;
+        public static bool operator !=(Variable v1, Variable v2) => CompareStrings(v1, v2) != 0;
 
         public static bool operator <(Variable v1, int v2) => v1.ToInteger() < v2;
         public static bool operator <(Variable v1, double v2) => v1.ToDouble() < v2;
