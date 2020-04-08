@@ -73,10 +73,12 @@ namespace SoftCircuits.ExpressionEvaluator
             int parenCount = 0;
             IToken token;
 
-            while (!parser.EndOfText)
+            while (true)
             {
-                // Skip spaces, tabs, etc.
                 parser.SkipWhiteSpace();
+                if (parser.EndOfText)
+                    break;
+
                 // Get next character
                 char c = parser.Peek();
                 if (c == '(')

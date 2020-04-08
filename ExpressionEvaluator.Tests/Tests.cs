@@ -20,24 +20,28 @@ namespace ExpressionEvaluatorTests
             Assert.IsTrue(eval.Evaluate("2 + 3") == 5);
             Assert.IsTrue(eval.Evaluate("2 - 3") == -1);
             Assert.IsTrue(eval.Evaluate("2 * 3") == 6);
+            Assert.IsTrue(eval.Evaluate("2 / 3") == 0);
             Assert.IsTrue(Math.Round(eval.Evaluate("2.0 / 3").ToDouble(), 3) == 0.667);
             Assert.IsTrue(eval.Evaluate("2 % 3") == 2);
             Assert.IsTrue(eval.Evaluate("2 % 3") == "2");
+            Assert.IsTrue(eval.Evaluate(" \t\r\n2 \t\r\n+ \t\r\n3 \t\r\n") == 5);
+            Assert.IsTrue(eval.Evaluate("     2     %     3     ") == 2);
 
             // Test expressions
-            Assert.AreEqual(17, eval.Evaluate("2 + 3 * 5").ToInteger());
-            Assert.AreEqual(25, eval.Evaluate("(2 + 3) * 5").ToInteger());
-            Assert.AreEqual(-25, eval.Evaluate("(2 + 3) * -5").ToInteger());
-            Assert.AreEqual(22, eval.Evaluate("(2 + 3) * (-5 + 14) / 2").ToDouble());
-            Assert.AreEqual(22.5, eval.Evaluate("(2.0 + 3) * (-5 + 14) / 2").ToDouble());
-            Assert.AreEqual(22, eval.Evaluate("((2 + 3) * (-5 + 14)) / 2").ToDouble());
-            Assert.AreEqual(22.5, eval.Evaluate("((2.0 + 3) * (-5 + 14)) / 2").ToDouble());
+            Assert.IsTrue(eval.Evaluate("2 + 3 * 5") == 17);
+            Assert.IsTrue(eval.Evaluate("(2 + 3) * 5") == 25);
+            Assert.IsTrue(eval.Evaluate("(2 + 3) * -5") == -25);
+            Assert.IsTrue(eval.Evaluate("(2 + 3) * (-5 + 14) / 2") == 22.0);
+            Assert.IsTrue(eval.Evaluate("(2.0 + 3) * (-5 + 14) / 2") == 22.5);
+            Assert.IsTrue(eval.Evaluate("((2 + 3) * (-5 + 14)) / 2") == 22.0);
+            Assert.IsTrue(eval.Evaluate("((2.0 + 3) * (-5 + 14)) / 2") == 22.5);
         }
 
         [TestMethod]
         public void TestStrings()
         {
             ExpressionEvaluator eval = new ExpressionEvaluator();
+            Assert.IsTrue(eval.Evaluate("12 & 34") == 1234);
             Assert.IsTrue(eval.Evaluate("\"12\" & \"34\"") == "1234");
             Assert.IsTrue(eval.Evaluate("'12' + '34'") == 46);
             Assert.IsTrue(eval.Evaluate("'abc' + 'def'") == 0);
