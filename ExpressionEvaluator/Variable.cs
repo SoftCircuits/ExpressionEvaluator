@@ -602,6 +602,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <summary>
         /// Static wrapper for <see cref="Calculate(int, Func{double, double, double})"></see>.
         /// Assigns results to a new <see cref="Variable"></see> and returns that variable.
+        /// </summary>
         private static Variable Calculate(Variable value1, int value2, Func<double, double, double> calculator)
         {
             Variable v = new Variable(value1);
@@ -612,6 +613,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <summary>
         /// Static wrapper for <see cref="Calculate(double, Func{double, double, double})"></see>.
         /// Assigns results to a new <see cref="Variable"></see> and returns that variable.
+        /// </summary>
         private static Variable Calculate(Variable value1, double value2, Func<double, double, double> calculator)
         {
             Variable v = new Variable(value1);
@@ -622,6 +624,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <summary>
         /// Static wrapper for <see cref="Calculate(string, Func{double, double, double})"></see>.
         /// Assigns results to a new <see cref="Variable"></see> and returns that variable.
+        /// </summary>
         private static Variable Calculate(Variable value1, string value2, Func<double, double, double> calculator)
         {
             Variable v = new Variable(value1);
@@ -632,6 +635,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <summary>
         /// Static wrapper for <see cref="Calculate(Variable, Func{double, double, double})"></see>.
         /// Assigns results to a new <see cref="Variable"></see> and returns that variable.
+        /// </summary>
         private static Variable Calculate(Variable value1, Variable value2, Func<double, double, double> calculator)
         {
             Variable v = new Variable(value1);
