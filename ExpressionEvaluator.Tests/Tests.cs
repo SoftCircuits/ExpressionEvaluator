@@ -52,6 +52,15 @@ namespace ExpressionEvaluatorTests
             Assert.IsFalse(eval.Evaluate("'16'") != "16.00");
             Assert.IsFalse(eval.Evaluate("'16.00'") != "16");
 
+            Assert.IsTrue(eval.Evaluate("16") == 16.0);
+            Assert.IsTrue(eval.Evaluate("16.00") == 16);
+            Assert.IsTrue(eval.Evaluate("'16'") == 16.0);
+            Assert.IsTrue(eval.Evaluate("'16.00'") == 16);
+            Assert.IsFalse(eval.Evaluate("16") != 16.0);
+            Assert.IsFalse(eval.Evaluate("16.00") != 16);
+            Assert.IsFalse(eval.Evaluate("'16'") != 16.0);
+            Assert.IsFalse(eval.Evaluate("'16.00'") != 16);
+
             Assert.IsTrue(eval.Evaluate("'abc' + 5") == 5);
             Assert.IsTrue(eval.Evaluate("'abc' - 5") == -5);
             Assert.IsTrue(eval.Evaluate("'abc' * 5") == 0);

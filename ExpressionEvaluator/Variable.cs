@@ -86,8 +86,8 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <param name="value">The value to assign to this Variable.</param>
         public void SetValue(int value)
         {
-            IntegerValue = value;
             Type = VariableType.Integer;
+            IntegerValue = value;
         }
 
         /// <summary>
@@ -96,8 +96,8 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <param name="value">The value to assign to this Variable.</param>
         public void SetValue(double value)
         {
-            DoubleValue = value;
             Type = VariableType.Double;
+            DoubleValue = value;
         }
 
         /// <summary>
@@ -106,8 +106,8 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <param name="value">The value to assign to this Variable.</param>
         public void SetValue(string value)
         {
-            StringValue = value ?? string.Empty;
             Type = VariableType.String;
+            StringValue = value ?? string.Empty;
         }
 
         /// <summary>
