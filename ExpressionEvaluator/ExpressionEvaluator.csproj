@@ -13,10 +13,10 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>expression evaluator expression-evaluator parser symbol function</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageReleaseNotes>Fixed exception with trailing spaces in expression; reworked unit tests.</PackageReleaseNotes>
+    <PackageReleaseNotes>Reworked Variable calculation logic; Reworked Variable comparison logic; Reworked unit tests.</PackageReleaseNotes>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Description>.NET library that will evaluate a string expression. Expressions can include integer, double and string operands. Operators can include "+", "-", "*", "/", "%" and "&amp;". Supports custom functions and symbols. Provides easy integration with any application.</Description>
-    <Version>2.0.8</Version>
+    <Version>2.0.9</Version>
     <PackageIcon>Logo_64x64.png</PackageIcon>
     <PackageIconUrl />
   </PropertyGroup>

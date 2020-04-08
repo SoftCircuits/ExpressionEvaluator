@@ -7,6 +7,9 @@ using System.Diagnostics;
 
 namespace SoftCircuits.ExpressionEvaluator
 {
+    /// <summary>
+    /// The type of value currently held by a <see cref="Variable"></see>.
+    /// </summary>
     public enum VariableType
     {
         Integer,
@@ -199,271 +202,149 @@ namespace SoftCircuits.ExpressionEvaluator
 
         #region Operations
 
-        private enum NumericType
-        {
-            None,
-            Integer,
-            Double,
-        }
+        /// <summary>
+        /// Adds the given value to this Variable.
+        /// </summary>
+        /// <param name="value">The value to be added.</param>
+        public void Add(int value) => Calculate(value, Add);
 
         /// <summary>
         /// Adds the given value to this Variable.
         /// </summary>
-        /// <param name="operand">The value to be added.</param>
-        public void Add(int operand)
-        {
-            if (GetNumericValue(out double value) == NumericType.Double)
-                SetValue(value + operand);
-            else
-                SetValue((int)value + operand);
-        }
+        /// <param name="value">The value to be added.</param>
+        public void Add(double value) => Calculate(value, Add);
 
         /// <summary>
         /// Adds the given value to this Variable.
         /// </summary>
-        /// <param name="operand">The value to be added.</param>
-        public void Add(double operand) => SetValue(ToDouble() + operand);
+        /// <param name="value">The value to be added.</param>
+        public void Add(string value) => Calculate(value, Add);
 
         /// <summary>
         /// Adds the given value to this Variable.
         /// </summary>
-        /// <param name="operand">The value to be added.</param>
-        public void Add(string operand) => CalculateStringOperand(operand, (val, op) => val + op);
-
-        /// <summary>
-        /// Adds the given value to this Variable.
-        /// </summary>
-        /// <param name="operand">The value to be added.</param>
-        public void Add(Variable operand)
-        {
-            switch (operand.Type)
-            {
-                case VariableType.Integer:
-                    Add(operand.IntegerValue);
-                    break;
-                case VariableType.Double:
-                    Add(operand.DoubleValue);
-                    break;
-                case VariableType.String:
-                    Add(operand.StringValue);
-                    break;
-                default:
-                    Debug.Assert(false);
-                    break;
-            }
-        }
+        /// <param name="value">The value to be added.</param>
+        public void Add(Variable value) => Calculate(value, Add);
 
         /// <summary>
         /// Subtracts the given value to this Variable.
         /// </summary>
-        /// <param name="operand">The value to be subtracted.</param>
-        public void Subtract(int operand)
-        {
-            if (GetNumericValue(out double value) == NumericType.Double)
-                SetValue(value - operand);
-            else
-                SetValue((int)value - operand);
-        }
+        /// <param name="value">The value to be subtracted.</param>
+        public void Subtract(int value) => Calculate(value, Subtract);
 
         /// <summary>
         /// Subtracts the given value to this Variable.
         /// </summary>
-        /// <param name="operand">The value to be subtracted.</param>
-        public void Subtract(double operand) => SetValue(ToDouble() - operand);
+        /// <param name="value">The value to be subtracted.</param>
+        public void Subtract(double value) => Calculate(value, Subtract);
 
         /// <summary>
         /// Subtracts the given value to this Variable.
         /// </summary>
-        /// <param name="operand">The value to be subtracted.</param>
-        public void Subtract(string operand) => CalculateStringOperand(operand, (val, op) => val - op);
+        /// <param name="value">The value to be subtracted.</param>
+        public void Subtract(string value) => Calculate(value, Subtract);
 
         /// <summary>
         /// Subtracts the given value to this Variable.
         /// </summary>
-        /// <param name="operand">The value to be subtracted.</param>
-        public void Subtract(Variable operand)
-        {
-            switch (operand.Type)
-            {
-                case VariableType.Integer:
-                    Subtract(operand.IntegerValue);
-                    break;
-                case VariableType.Double:
-                    Subtract(operand.DoubleValue);
-                    break;
-                case VariableType.String:
-                    Subtract(operand.StringValue);
-                    break;
-                default:
-                    Debug.Assert(false);
-                    break;
-            }
-        }
+        /// <param name="value">The value to be subtracted.</param>
+        public void Subtract(Variable value) => Calculate(value, Subtract);
 
         /// <summary>
         /// Multiplies this Variable by the given value.
         /// </summary>
-        /// <param name="operand">The value by which to multiply.</param>
-        public void Multiply(int operand)
-        {
-            if (GetNumericValue(out double value) == NumericType.Double)
-                SetValue(value * operand);
-            else
-                SetValue((int)value * operand);
-        }
+        /// <param name="value">The value by which to multiply.</param>
+        public void Multiply(int value) => Calculate(value, Multiply);
 
         /// <summary>
         /// Multiplies this Variable by the given value.
         /// </summary>
-        /// <param name="operand">The value by which to multiply.</param>
-        public void Multiply(double operand) => SetValue(ToDouble() * operand);
+        /// <param name="value">The value by which to multiply.</param>
+        public void Multiply(double value) => Calculate(value, Multiply);
 
         /// <summary>
         /// Multiplies this Variable by the given value.
         /// </summary>
-        /// <param name="operand">The value by which to multiply.</param>
-        public void Multiply(string operand) => CalculateStringOperand(operand, (val, op) => val * op);
+        /// <param name="value">The value by which to multiply.</param>
+        public void Multiply(string value) => Calculate(value, Multiply);
 
         /// <summary>
         /// Multiplies this Variable by the given value.
         /// </summary>
-        /// <param name="operand">The value by which to multiply.</param>
-        public void Multiply(Variable operand)
-        {
-            switch (operand.Type)
-            {
-                case VariableType.Integer:
-                    Multiply(operand.IntegerValue);
-                    break;
-                case VariableType.Double:
-                    Multiply(operand.DoubleValue);
-                    break;
-                case VariableType.String:
-                    Multiply(operand.StringValue);
-                    break;
-                default:
-                    Debug.Assert(false);
-                    break;
-            }
-        }
+        /// <param name="value">The value by which to multiply.</param>
+        public void Multiply(Variable value) => Calculate(value, Multiply);
 
         /// <summary>
         /// Divides this Variable by the given value. Returns zero if the divisor is zero.
         /// </summary>
-        /// <param name="operand">The value by which to divide.</param>
-        public void Divide(int operand)
-        {
-            if (GetNumericValue(out double value) == NumericType.Double)
-                SetValue((operand == 0) ? 0 : value / operand);
-            else
-                SetValue((operand == 0) ? 0 : (int)value / operand);
-        }
+        /// <param name="value">The value by which to divide.</param>
+        public void Divide(int value) => Calculate(value, Divide);
 
         /// <summary>
         /// Divides this Variable by the given value. Returns zero if the divisor is zero.
         /// </summary>
-        /// <param name="operand">The value by which to divide.</param>
-        public void Divide(double operand) => SetValue((operand == 0) ? 0 : ToDouble() / operand);
+        /// <param name="value">The value by which to divide.</param>
+        public void Divide(double value) => Calculate(value, Divide);
 
         /// <summary>
         /// Divides this Variable by the given value. Returns zero if the divisor is zero.
         /// </summary>
-        /// <param name="operand">The value by which to divide.</param>
-        public void Divide(string operand) => CalculateStringOperand(operand, (val, op) => (op == 0) ? 0 : val / op);
+        /// <param name="value">The value by which to divide.</param>
+        public void Divide(string value) => Calculate(value, Divide);
 
         /// <summary>
         /// Divides this Variable by the given value. Returns zero if the divisor is zero.
         /// </summary>
-        /// <param name="operand">The value by which to divide.</param>
-        public void Divide(Variable operand)
-        {
-            switch (operand.Type)
-            {
-                case VariableType.Integer:
-                    Divide(operand.IntegerValue);
-                    break;
-                case VariableType.Double:
-                    Divide(operand.DoubleValue);
-                    break;
-                case VariableType.String:
-                    Divide(operand.StringValue);
-                    break;
-                default:
-                    Debug.Assert(false);
-                    break;
-            }
-        }
+        /// <param name="value">The value by which to divide.</param>
+        public void Divide(Variable value) => Calculate(value, Divide);
 
         /// <summary>
         /// Divides this Variable by the given value. Returns zero if the divisor is zero.
         /// </summary>
-        /// <param name="operand">The value by which to divide.</param>
-        public void Modulus(int operand)
-        {
-            if (GetNumericValue(out double value) == NumericType.Double)
-                SetValue((operand == 0) ? 0 : value % operand);
-            else
-                SetValue((operand == 0) ? 0 : (int)value % operand);
-        }
+        /// <param name="value">The value by which to divide.</param>
+        public void Modulus(int value) => Calculate(value, Modulus);
 
         /// <summary>
         /// Divides this Variable by the given value. Returns zero if the divisor is zero.
         /// </summary>
-        /// <param name="operand">The value by which to divide.</param>
-        public void Modulus(double operand) => SetValue((operand == 0) ? 0 : ToDouble() % operand);
+        /// <param name="value">The value by which to divide.</param>
+        public void Modulus(double value) => Calculate(value, Modulus);
 
         /// <summary>
         /// Divides this Variable by the given value. Returns zero if the divisor is zero.
         /// </summary>
-        /// <param name="operand">The value by which to divide.</param>
-        public void Modulus(string operand) => CalculateStringOperand(operand, (val, op) => (op == 0) ? 0 : val % op);
+        /// <param name="value">The value by which to divide.</param>
+        public void Modulus(string value) => Calculate(value, Modulus);
 
         /// <summary>
         /// Divides this Variable by the given value. Returns zero if the divisor is zero.
         /// </summary>
-        /// <param name="operand">The value by which to divide.</param>
-        public void Modulus(Variable operand)
-        {
-            switch (operand.Type)
-            {
-                case VariableType.Integer:
-                    Modulus(operand.IntegerValue);
-                    break;
-                case VariableType.Double:
-                    Modulus(operand.DoubleValue);
-                    break;
-                case VariableType.String:
-                    Modulus(operand.StringValue);
-                    break;
-                default:
-                    Debug.Assert(false);
-                    break;
-            }
-        }
+        /// <param name="value">The value by which to divide.</param>
+        public void Modulus(Variable value) => Calculate(value, Modulus);
 
         /// <summary>
         /// Concatenates two values together as strings.
         /// </summary>
-        /// <param name="operand">The value to be concatenated.</param>
-        public void Concatenate(int operand) => SetValue(ToString() + operand.ToString());
+        /// <param name="value">The value to be concatenated.</param>
+        public void Concatenate(int value) => SetValue(ToString() + value.ToString());
 
         /// <summary>
         /// Concatenates two values together as strings.
         /// </summary>
-        /// <param name="operand">The value to be concatenated.</param>
-        public void Concatenate(double operand) => SetValue(ToString() + operand.ToString());
+        /// <param name="value">The value to be concatenated.</param>
+        public void Concatenate(double value) => SetValue(ToString() + value.ToString());
 
         /// <summary>
         /// Concatenates two values together as strings.
         /// </summary>
-        /// <param name="operand">The value to be concatenated.</param>
-        public void Concatenate(string operand) => SetValue(ToString() + operand);
+        /// <param name="value">The value to be concatenated.</param>
+        public void Concatenate(string value) => SetValue(ToString() + value);
 
         /// <summary>
         /// Concatenates two values together as strings.
         /// </summary>
-        /// <param name="operand">The value to be concatenated.</param>
-        public void Concatenate(Variable operand) => SetValue(ToString() + operand.ToString());
+        /// <param name="value">The value to be concatenated.</param>
+        public void Concatenate(Variable value) => SetValue(ToString() + value.ToString());
 
         /// <summary>
         /// Negates the value of this Variable.
@@ -479,10 +360,18 @@ namespace SoftCircuits.ExpressionEvaluator
                     DoubleValue = -DoubleValue;
                     break;
                 case VariableType.String:
-                    if (GetNumericValue(StringValue, out double value) == NumericType.Double)
-                        SetValue(-value);
-                    else
-                        SetValue(-(int)value);
+                    switch (GetNumericValue(StringValue, out double value))
+                    {
+                        case NumericType.None:
+                            SetValue(0);
+                            break;
+                        case NumericType.Integer:
+                            SetValue(-(int)value);
+                            break;
+                        case NumericType.Double:
+                            SetValue(-value);
+                            break;
+                    }
                     break;
                 default:
                     Debug.Assert(false);
@@ -490,25 +379,274 @@ namespace SoftCircuits.ExpressionEvaluator
             }
         }
 
+        #endregion
+
+        #region Conversion operators
+
+        public static implicit operator int(Variable v) => v.ToInteger();
+        public static implicit operator double(Variable v) => v.ToDouble();
+        public static implicit operator string(Variable v) => v.ToString();
+
+        #endregion
+
+        #region Comparison operators
+
+        public static bool operator ==(Variable value1, int value2) => Compare(value1, value2) == 0;
+        public static bool operator ==(Variable value1, double value2) => Compare(value1, value2) == 0;
+        public static bool operator ==(Variable value1, string value2) => Compare(value1, value2) == 0;
+        public static bool operator ==(Variable value1, Variable value2) => Compare(value1, value2) == 0;
+
+        public static bool operator !=(Variable value1, int value2) => Compare(value1, value2) != 0;
+        public static bool operator !=(Variable value1, double value2) => Compare(value1, value2) != 0;
+        public static bool operator !=(Variable value1, string value2) => Compare(value1, value2) != 0;
+        public static bool operator !=(Variable value1, Variable value2) => Compare(value1, value2) != 0;
+
+        public static bool operator <(Variable value1, int value2) => Compare(value1, value2) < 0;
+        public static bool operator <(Variable value1, double value2) => Compare(value1, value2) < 0;
+        public static bool operator <(Variable value1, string value2) => Compare(value1, value2) < 0;
+        public static bool operator <(Variable value1, Variable value2) => Compare(value1, value2) < 0;
+
+        public static bool operator <=(Variable value1, int value2) => Compare(value1, value2) <= 0;
+        public static bool operator <=(Variable value1, double value2) => Compare(value1, value2) <= 0;
+        public static bool operator <=(Variable value1, string value2) => Compare(value1, value2) <= 0;
+        public static bool operator <=(Variable value1, Variable value2) => Compare(value1, value2) <= 0;
+
+        public static bool operator >(Variable value1, int value2) => Compare(value1, value2) > 0;
+        public static bool operator >(Variable value1, double value2) => Compare(value1, value2) > 0;
+        public static bool operator >(Variable value1, string value2) => Compare(value1, value2) > 0;
+        public static bool operator >(Variable value1, Variable value2) => Compare(value1, value2) > 0;
+
+        public static bool operator >=(Variable value1, int value2) => Compare(value1, value2) >= 0;
+        public static bool operator >=(Variable value1, double value2) => Compare(value1, value2) >= 0;
+        public static bool operator >=(Variable value1, string value2) => Compare(value1, value2) >= 0;
+        public static bool operator >=(Variable value1, Variable value2) => Compare(value1, value2) >= 0;
+
+        #endregion
+
+        #region Operation operators
+
+        public static Variable operator +(Variable value1, int value2) => Calculate(value1, value2, Add);
+        public static Variable operator +(Variable value1, double value2) => Calculate(value1, value2, Add);
+        public static Variable operator +(Variable value1, string value2) => Calculate(value1, value2, Add);
+        public static Variable operator +(Variable value1, Variable value2) => Calculate(value1, value2, Add);
+
+        public static Variable operator -(Variable value1, int value2) => Calculate(value1, value2, Subtract);
+        public static Variable operator -(Variable value1, double value2) => Calculate(value1, value2, Subtract);
+        public static Variable operator -(Variable value1, string value2) => Calculate(value1, value2, Subtract);
+        public static Variable operator -(Variable value1, Variable value2) => Calculate(value1, value2, Subtract);
+
+        public static Variable operator *(Variable value1, int value2) => Calculate(value1, value2, Multiply);
+        public static Variable operator *(Variable value1, double value2) => Calculate(value1, value2, Multiply);
+        public static Variable operator *(Variable value1, string value2) => Calculate(value1, value2, Multiply);
+        public static Variable operator *(Variable value1, Variable value2) => Calculate(value1, value2, Multiply);
+
+        public static Variable operator /(Variable value1, int value2) => Calculate(value1, value2, Divide);
+        public static Variable operator /(Variable value1, double value2) => Calculate(value1, value2, Divide);
+        public static Variable operator /(Variable value1, string value2) => Calculate(value1, value2, Divide);
+        public static Variable operator /(Variable value1, Variable value2) => Calculate(value1, value2, Divide);
+
+        public static Variable operator %(Variable value1, int value2) => Calculate(value1, value2, Modulus);
+        public static Variable operator %(Variable value1, double value2) => Calculate(value1, value2, Modulus);
+        public static Variable operator %(Variable value1, string value2) => Calculate(value1, value2, Modulus);
+        public static Variable operator %(Variable value1, Variable value2) => Calculate(value1, value2, Modulus);
+
+        public static Variable operator &(Variable value1, int value2) => new Variable(value1.ToString() + value2.ToString());
+        public static Variable operator &(Variable value1, double value2) => new Variable(value1.ToString() + value2.ToString());
+        public static Variable operator &(Variable value1, string value2) => new Variable(value1.ToString() + value2);
+        public static Variable operator &(Variable value1, Variable value2) => new Variable(value1.ToString() + value2.ToString());
+
+        public static Variable operator -(Variable value)
+        {
+            Variable v = new Variable(value);
+            v.Negate();
+            return v;
+        }
+
+        #endregion
+
+        #region Private helpers
+
+        // Calculation delegates
+
+        private static double Add(double value, double operand) => value + operand;
+        private static double Subtract(double value, double operand) => value - operand;
+        private static double Multiply(double value, double operand) => value * operand;
+        private static double Divide(double value, double operand) => (operand == 0) ? 0 : value / operand;
+        private static double Modulus(double value, double operand) => (operand == 0) ? 0 : value % operand;
+
         /// <summary>
-        /// Performs a calculation using this value and a string value.
+        /// Returns a negative value if <paramref name="value1"/> is less than <paramref name="value2"/>,
+        /// a positive value if <paramref name="value1"/> is greater than <paramref name="value2"/>,
+        /// or zero if they are equal.
         /// </summary>
-        /// <param name="s">The string value to use in the calculation.</param>
-        /// <param name="calc">Delegate that performs the calculation.</param>
-        private void CalculateStringOperand(string s, Func<double, double, double> calc)
+        private static double Compare(Variable value1, int value2)
+        {
+            // Compare as numbers if possible
+            if (value1.GetNumericValue(out double v) != NumericType.None)
+                return v - value2;
+            // Else compare as strings
+            return string.CompareOrdinal(value1.ToString(), value2.ToString());
+        }
+
+        /// <summary>
+        /// Returns a negative value if <paramref name="value1"/> is less than <paramref name="value2"/>,
+        /// a positive value if <paramref name="value1"/> is greater than <paramref name="value2"/>,
+        /// or zero if they are equal.
+        /// </summary>
+        private static double Compare(Variable value1, double value2)
+        {
+            // Compare as numbers if possible
+            if (value1.GetNumericValue(out double v) != NumericType.None)
+                return v - value2;
+            // Else compare as strings
+            return string.CompareOrdinal(value1.ToString(), value2.ToString());
+        }
+
+        /// <summary>
+        /// Returns a negative value if <paramref name="value1"/> is less than <paramref name="value2"/>,
+        /// a positive value if <paramref name="value1"/> is greater than <paramref name="value2"/>,
+        /// or zero if they are equal.
+        /// </summary>
+        private static double Compare(Variable value1, string value2)
+        {
+            // Compare as numbers if possible
+            if (value1.GetNumericValue(out double v1) != NumericType.None &&
+                GetNumericValue(value2, out double v2) != NumericType.None)
+                return v1 - v2;
+            // Else compare as strings
+            return string.CompareOrdinal(value1.ToString(), value2.ToString());
+        }
+
+        /// <summary>
+        /// Returns a negative value if <paramref name="value1"/> is less than <paramref name="value2"/>,
+        /// a positive value if <paramref name="value1"/> is greater than <paramref name="value2"/>,
+        /// or zero if they are equal.
+        /// </summary>
+        private static double Compare(Variable value1, Variable value2)
+        {
+            // Compare as numbers if possible
+            if (value1.GetNumericValue(out double v1) != NumericType.None &&
+                value2.GetNumericValue(out double v2) != NumericType.None)
+                return v1 - v2;
+            // Else compare as strings
+            return string.CompareOrdinal(value1.ToString(), value2);
+        }
+
+        /// <summary>
+        /// Performs the given calculation against this Variable and the given operand.
+        /// </summary>
+        /// <param name="operand">The operand on which to perform the calculation.</param>
+        /// <param name="calculator">Delegate that performs the calculation.</param>
+        private void Calculate(int operand, Func<double, double, double> calculator)
+        {
+            // Get values
+            var type = GetNumericValue(out double value);
+            // Perform calculation
+            value = calculator(value, operand);
+            // Set result
+            if (type == NumericType.Double)
+                SetValue(value);
+            else
+                SetValue((int)value);
+        }
+
+        /// <summary>
+        /// Performs the given calculation against this Variable and the given operand.
+        /// </summary>
+        /// <param name="operand">The operand on which to perform the calculation.</param>
+        /// <param name="calculator">Delegate that performs the calculation.</param>
+        private void Calculate(double operand, Func<double, double, double> calculator)
+        {
+            // Set value
+            SetValue(calculator(ToDouble(), operand));
+        }
+
+        /// <summary>
+        /// Performs the given calculation against this Variable and the given operand.
+        /// </summary>
+        /// <param name="operand">The operand on which to perform the calculation.</param>
+        /// <param name="calculator">Delegate that performs the calculation.</param>
+        private void Calculate(string operand, Func<double, double, double> calculator)
         {
             // Get values
             var valType = GetNumericValue(out double value);
-            var opType = GetNumericValue(s, out double operand);
-
+            var opType = GetNumericValue(operand, out double operand2);
             // Perform calculation
-            value = calc(value, operand);
-
+            value = calculator(value, operand2);
             // Set result
             if (valType == NumericType.Double || opType == NumericType.Double)
                 SetValue(value);
             else
                 SetValue((int)value);
+        }
+
+        /// <summary>
+        /// Performs the given calculation against this Variable and the given operand.
+        /// </summary>
+        /// <param name="operand">The operand on which to perform the calculation.</param>
+        /// <param name="calculator">Delegate that performs the calculation.</param>
+        private void Calculate(Variable operand, Func<double, double, double> calculator)
+        {
+            // Get values
+            var valType = GetNumericValue(out double value);
+            var opType = operand.GetNumericValue(out double operand2);
+            // Perform calculation
+            value = calculator(value, operand2);
+            // Set result
+            if (valType == NumericType.Double || opType == NumericType.Double)
+                SetValue(value);
+            else
+                SetValue((int)value);
+        }
+
+        /// <summary>
+        /// Static wrapper for <see cref="Calculate(int, Func{double, double, double})"></see>.
+        /// Assigns results to a new <see cref="Variable"></see> and returns that variable.
+        private static Variable Calculate(Variable value1, int value2, Func<double, double, double> calculator)
+        {
+            Variable v = new Variable(value1);
+            v.Calculate(value2, calculator);
+            return v;
+        }
+
+        /// <summary>
+        /// Static wrapper for <see cref="Calculate(double, Func{double, double, double})"></see>.
+        /// Assigns results to a new <see cref="Variable"></see> and returns that variable.
+        private static Variable Calculate(Variable value1, double value2, Func<double, double, double> calculator)
+        {
+            Variable v = new Variable(value1);
+            v.Calculate(value2, calculator);
+            return v;
+        }
+
+        /// <summary>
+        /// Static wrapper for <see cref="Calculate(string, Func{double, double, double})"></see>.
+        /// Assigns results to a new <see cref="Variable"></see> and returns that variable.
+        private static Variable Calculate(Variable value1, string value2, Func<double, double, double> calculator)
+        {
+            Variable v = new Variable(value1);
+            v.Calculate(value2, calculator);
+            return v;
+        }
+
+        /// <summary>
+        /// Static wrapper for <see cref="Calculate(Variable, Func{double, double, double})"></see>.
+        /// Assigns results to a new <see cref="Variable"></see> and returns that variable.
+        private static Variable Calculate(Variable value1, Variable value2, Func<double, double, double> calculator)
+        {
+            Variable v = new Variable(value1);
+            v.Calculate(value2, calculator);
+            return v;
+        }
+
+        /// <summary>
+        /// <see cref="GetNumericValue(string, out double)"></see> return values.
+        /// </summary>
+        private enum NumericType
+        {
+            None,
+            Integer,
+            Double,
         }
 
         /// <summary>
@@ -551,240 +689,15 @@ namespace SoftCircuits.ExpressionEvaluator
                 value = i;
                 return NumericType.Integer;
             }
-
             // Attempt to parse double
             if (double.TryParse(s, out double d))
             {
                 value = d;
                 return NumericType.Double;
             }
-
             // Not numeric
             value = default;
             return NumericType.None;
-        }
-
-        #endregion
-
-        #region Conversion operators
-
-        public static implicit operator int(Variable v) => v.ToInteger();
-        public static implicit operator double(Variable v) => v.ToDouble();
-        public static implicit operator string(Variable v) => v.ToString();
-
-        #endregion
-
-        #region Comparison operators
-
-        public static bool operator ==(Variable v1, int v2) => v1.ToInteger() == v2;
-        public static bool operator ==(Variable v1, double v2) => v1.ToDouble() == v2;
-        public static bool operator ==(Variable v1, string v2) => CompareStrings(v1, v2) == 0;
-        public static bool operator ==(Variable v1, Variable v2) => CompareStrings(v1, v2) == 0;
-
-        public static bool operator !=(Variable v1, int v2) => v1.ToInteger() != v2;
-        public static bool operator !=(Variable v1, double v2) => v1.ToDouble() != v2;
-        public static bool operator !=(Variable v1, string v2) => CompareStrings(v1, v2) != 0;
-        public static bool operator !=(Variable v1, Variable v2) => CompareStrings(v1, v2) != 0;
-
-        public static bool operator <(Variable v1, int v2) => v1.ToInteger() < v2;
-        public static bool operator <(Variable v1, double v2) => v1.ToDouble() < v2;
-        public static bool operator <(Variable v1, string v2) => CompareStrings(v1, v2) < 0;
-        public static bool operator <(Variable v1, Variable v2) => CompareStrings(v1, v2) < 0;
-
-        public static bool operator <=(Variable v1, int v2) => v1.ToInteger() <= v2;
-        public static bool operator <=(Variable v1, double v2) => v1.ToDouble() <= v2;
-        public static bool operator <=(Variable v1, string v2) => CompareStrings(v1, v2) <= 0;
-        public static bool operator <=(Variable v1, Variable v2) => CompareStrings(v1, v2) <= 0;
-
-        public static bool operator >(Variable v1, int v2) => v1.ToInteger() > v2;
-        public static bool operator >(Variable v1, double v2) => v1.ToDouble() > v2;
-        public static bool operator >(Variable v1, string v2) => CompareStrings(v1, v2) > 0;
-        public static bool operator >(Variable v1, Variable v2) => CompareStrings(v1, v2) > 0;
-
-        public static bool operator >=(Variable v1, int v2) => v1.ToInteger() >= v2;
-        public static bool operator >=(Variable v1, double v2) => v1.ToDouble() >= v2;
-        public static bool operator >=(Variable v1, string v2) => CompareStrings(v1, v2) >= 0;
-        public static bool operator >=(Variable v1, Variable v2) => CompareStrings(v1, v2) >= 0;
-
-        private static double CompareStrings(Variable v1, Variable v2)
-        {
-            // Compare as numbers if possible
-            if (v1.GetNumericValue(out double value1) != NumericType.None &&
-                v2.GetNumericValue(out double value2) != NumericType.None)
-                return value1 - value2;
-            // Else compare as strings
-            return string.CompareOrdinal(v1.ToString(), v2.ToString());
-        }
-
-        private static double CompareStrings(Variable v1, string v2)
-        {
-            // Compare as numbers if possible
-            if (v1.GetNumericValue(out double value1) != NumericType.None &&
-                GetNumericValue(v2, out double value2) != NumericType.None)
-                return value1 - value2;
-            // Else compare as strings
-            return string.CompareOrdinal(v1.ToString(), v2);
-        }
-
-        #endregion
-
-        #region Operation operators
-
-        public static Variable operator +(Variable v1, int v2)
-        {
-            Variable v = new Variable(v1);
-            v.Add(v2);
-            return v;
-        }
-        public static Variable operator +(Variable v1, double v2)
-        {
-            Variable v = new Variable(v1);
-            v.Add(v2);
-            return v;
-        }
-        public static Variable operator +(Variable v1, string v2)
-        {
-            Variable v = new Variable(v1);
-            v.Add(v2);
-            return v;
-        }
-        public static Variable operator +(Variable v1, Variable v2)
-        {
-            Variable v = new Variable(v1);
-            v.Add(v2);
-            return v;
-        }
-
-        public static Variable operator -(Variable v1, int v2)
-        {
-            Variable v = new Variable(v1);
-            v.Subtract(v2);
-            return v;
-        }
-        public static Variable operator -(Variable v1, double v2)
-        {
-            Variable v = new Variable(v1);
-            v.Subtract(v2);
-            return v;
-        }
-        public static Variable operator -(Variable v1, string v2)
-        {
-            Variable v = new Variable(v1);
-            v.Subtract(v2);
-            return v;
-        }
-        public static Variable operator -(Variable v1, Variable v2)
-        {
-            Variable v = new Variable(v1);
-            v.Subtract(v2);
-            return v;
-        }
-
-        public static Variable operator *(Variable v1, int v2)
-        {
-            Variable v = new Variable(v1);
-            v.Multiply(v2);
-            return v;
-        }
-        public static Variable operator *(Variable v1, double v2)
-        {
-            Variable v = new Variable(v1);
-            v.Multiply(v2);
-            return v;
-        }
-        public static Variable operator *(Variable v1, string v2)
-        {
-            Variable v = new Variable(v1);
-            v.Multiply(v2);
-            return v;
-        }
-        public static Variable operator *(Variable v1, Variable v2)
-        {
-            Variable v = new Variable(v1);
-            v.Multiply(v2);
-            return v;
-        }
-
-        public static Variable operator /(Variable v1, int v2)
-        {
-            Variable v = new Variable(v1);
-            v.Divide(v2);
-            return v;
-        }
-        public static Variable operator /(Variable v1, double v2)
-        {
-            Variable v = new Variable(v1);
-            v.Divide(v2);
-            return v;
-        }
-        public static Variable operator /(Variable v1, string v2)
-        {
-            Variable v = new Variable(v1);
-            v.Divide(v2);
-            return v;
-        }
-        public static Variable operator /(Variable v1, Variable v2)
-        {
-            Variable v = new Variable(v1);
-            v.Divide(v2);
-            return v;
-        }
-
-        public static Variable operator %(Variable v1, int v2)
-        {
-            Variable v = new Variable(v1);
-            v.Modulus(v2);
-            return v;
-        }
-        public static Variable operator %(Variable v1, double v2)
-        {
-            Variable v = new Variable(v1);
-            v.Modulus(v2);
-            return v;
-        }
-        public static Variable operator %(Variable v1, string v2)
-        {
-            Variable v = new Variable(v1);
-            v.Modulus(v2);
-            return v;
-        }
-        public static Variable operator %(Variable v1, Variable v2)
-        {
-            Variable v = new Variable(v1);
-            v.Modulus(v2);
-            return v;
-        }
-
-        public static Variable operator &(Variable v1, int v2)
-        {
-            Variable v = new Variable(v1);
-            v.Concatenate(v2);
-            return v;
-        }
-        public static Variable operator &(Variable v1, double v2)
-        {
-            Variable v = new Variable(v1);
-            v.Concatenate(v2);
-            return v;
-        }
-        public static Variable operator &(Variable v1, string v2)
-        {
-            Variable v = new Variable(v1);
-            v.Concatenate(v2);
-            return v;
-        }
-        public static Variable operator &(Variable v1, Variable v2)
-        {
-            Variable v = new Variable(v1);
-            v.Concatenate(v2);
-            return v;
-        }
-
-        public static Variable operator -(Variable v1)
-        {
-            Variable v = new Variable(v1);
-            v.Negate();
-            return v;
         }
 
         #endregion
