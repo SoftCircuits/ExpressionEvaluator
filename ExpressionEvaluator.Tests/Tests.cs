@@ -17,12 +17,12 @@ namespace ExpressionEvaluatorTests
             ExpressionEvaluator eval = new ExpressionEvaluator();
 
             // Test operators
-            Assert.AreEqual(5, eval.Evaluate("2 + 3").ToInteger());
-            Assert.AreEqual(-1, eval.Evaluate("2 - 3").ToInteger());
-            Assert.AreEqual(6, eval.Evaluate("2 * 3").ToInteger());
-            Assert.AreEqual(0.667, Math.Round(eval.Evaluate("2.0 / 3").ToDouble(), 3));
-            Assert.AreEqual(2, eval.Evaluate("2 % 3").ToInteger());
-            Assert.AreEqual("2", eval.Evaluate("2 % 3").ToString());
+            Assert.IsTrue(eval.Evaluate("2 + 3") == 5);
+            Assert.IsTrue(eval.Evaluate("2 - 3") == -1);
+            Assert.IsTrue(eval.Evaluate("2 * 3") == 6);
+            Assert.IsTrue(Math.Round(eval.Evaluate("2.0 / 3").ToDouble(), 3) == 0.667);
+            Assert.IsTrue(eval.Evaluate("2 % 3") == 2);
+            Assert.IsTrue(eval.Evaluate("2 % 3") == "2");
 
             // Test expressions
             Assert.AreEqual(17, eval.Evaluate("2 + 3 * 5").ToInteger());
@@ -38,10 +38,10 @@ namespace ExpressionEvaluatorTests
         public void TestStrings()
         {
             ExpressionEvaluator eval = new ExpressionEvaluator();
-            Assert.AreEqual("1234", eval.Evaluate("\"12\" & \"34\""));
-            Assert.AreEqual(46, eval.Evaluate("'12' + '34'"));
-            Assert.AreEqual("0", eval.Evaluate("'abc' + 'def'"));
-            Assert.AreEqual("abcdef", eval.Evaluate("'abc' & 'def'"));
+            Assert.IsTrue(eval.Evaluate("\"12\" & \"34\"") == "1234");
+            Assert.IsTrue(eval.Evaluate("'12' + '34'") == 46);
+            Assert.IsTrue(eval.Evaluate("'abc' + 'def'") == 0);
+            Assert.IsTrue(eval.Evaluate("'abc' & 'def'") == "abcdef");
 
             Assert.IsTrue(eval.Evaluate("16") == "16.00");
             Assert.IsTrue(eval.Evaluate("16.00") == "16");
@@ -52,18 +52,18 @@ namespace ExpressionEvaluatorTests
             Assert.IsFalse(eval.Evaluate("'16'") != "16.00");
             Assert.IsFalse(eval.Evaluate("'16.00'") != "16");
 
-            Assert.AreEqual(5, eval.Evaluate("'abc' + 5"));
-            Assert.AreEqual(-5, eval.Evaluate("'abc' - 5"));
-            Assert.AreEqual(0, eval.Evaluate("'abc' * 5"));
-            Assert.AreEqual(0, eval.Evaluate("'abc' / 5"));
-            Assert.AreEqual(0, eval.Evaluate("'abc' % 5"));
-            Assert.AreEqual("abc", eval.Evaluate("-'abc'"));
-            Assert.AreEqual("abc5", eval.Evaluate("'abc' & 5"));
+            Assert.IsTrue(eval.Evaluate("'abc' + 5") == 5);
+            Assert.IsTrue(eval.Evaluate("'abc' - 5") == -5);
+            Assert.IsTrue(eval.Evaluate("'abc' * 5") == 0);
+            Assert.IsTrue(eval.Evaluate("'abc' / 5") == 0);
+            Assert.IsTrue(eval.Evaluate("'abc' % 5") == 0);
+            Assert.IsTrue(eval.Evaluate("-'abc'") == 0);
+            Assert.IsTrue(eval.Evaluate("'abc' & 5") == "abc5");
 
-            Assert.AreEqual(123, eval.Evaluate("123"));
-            Assert.AreEqual(123, eval.Evaluate("\"123\""));
-            Assert.AreEqual("123", eval.Evaluate("123"));
-            Assert.AreEqual("123", eval.Evaluate("\"123\""));
+            Assert.IsTrue(eval.Evaluate("123") == 123);
+            Assert.IsTrue(eval.Evaluate("\"123\"") == 123);
+            Assert.IsTrue(eval.Evaluate("123") == "123");
+            Assert.IsTrue(eval.Evaluate("\"123\"") == "123");
 
             Assert.AreEqual(VariableType.Integer, eval.Evaluate("\"2\" + \"2\"").Type);
             Assert.AreEqual(VariableType.Double, eval.Evaluate("\"2.5\" + \"2.6\"").Type);
@@ -130,65 +130,65 @@ namespace ExpressionEvaluatorTests
             v.SetValue(100);
 
             v2 = v + 1;
-            Assert.AreEqual(101, v2);
+            Assert.IsTrue(v2 == 101);
             v2 = v + 1.5;
-            Assert.AreEqual(101.5, v2);
+            Assert.IsTrue(v2 == 101.5);
             v2 = v + "10";
-            Assert.AreEqual(110, v2);
+            Assert.IsTrue(v2 == 110);
             v2 = v + v2;
-            Assert.AreEqual(210, v2);
+            Assert.IsTrue(v2 == 210);
 
             v2 = v - 1;
-            Assert.AreEqual(99, v2);
+            Assert.IsTrue(v2 == 99);
             v2 = v - 1.5;
-            Assert.AreEqual(98.5, v2);
+            Assert.IsTrue(v2 == 98.5);
             v2 = v - "10";
-            Assert.AreEqual(90, v2);
+            Assert.IsTrue(v2 == 90);
             v2 = v - v2;
-            Assert.AreEqual(10, v2);
+            Assert.IsTrue(v2 == 10);
 
             v2 = v * 1;
-            Assert.AreEqual(100, v2);
+            Assert.IsTrue(v2 == 100);
             v2 = v * 1.5;
-            Assert.AreEqual(150, v2);
+            Assert.IsTrue(v2 == 150);
             v2 = v * "10";
-            Assert.AreEqual(1000, v2);
+            Assert.IsTrue(v2 == 1000);
             v2 = v * v2;
-            Assert.AreEqual(100000, v2);
+            Assert.IsTrue(v2 == 100000);
 
             v2 = v / 1;
-            Assert.AreEqual(100, v2);
+            Assert.IsTrue(v2 == 100);
             v2 = v / 1.5;
-            Assert.AreEqual(66.66666666666667, v2);
+            Assert.IsTrue(v2 == 66.66666666666667);
             v2 = v / "10";
-            Assert.AreEqual(10, v2);
+            Assert.IsTrue(v2 == 10);
             v2 = v / v2;
-            Assert.AreEqual(10, v2);
+            Assert.IsTrue(v2 == 10);
             v2 = v / 0;
-            Assert.AreEqual(0, v2);
+            Assert.IsTrue(v2 == 0);
 
             v2 = v % 1;
-            Assert.AreEqual(0, v2);
+            Assert.IsTrue(v2 == 0);
             v2 = v % 1.5;
-            Assert.AreEqual(1, v2);
+            Assert.IsTrue(v2 == 1);
             v2 = v % "34";
-            Assert.AreEqual(32, v2);
+            Assert.IsTrue(v2 == 32);
             v2 = v % v2;
-            Assert.AreEqual(4, v2);
+            Assert.IsTrue(v2 == 4);
             v2 = v % 0;
-            Assert.AreEqual(0, v2);
+            Assert.IsTrue(v2 == 0);
 
             v2 = v & 1;
-            Assert.AreEqual("1001", v2);
+            Assert.IsTrue(v2 == "1001");
             v2 = v & 1.5;
-            Assert.AreEqual(1001.5, v2);
+            Assert.IsTrue(v2 == 1001.5);
             v2 = v & "10";
-            Assert.AreEqual(10010, v2);
+            Assert.IsTrue(v2 == 10010);
             v2 = v & v2;
-            Assert.AreEqual(10010010, v2);
+            Assert.IsTrue(v2 == 10010010);
 
             v2 = -v;
-            Assert.AreEqual(-100, v2);
+            Assert.IsTrue(v2 == -100);
         }
 
         [TestMethod]
@@ -196,9 +196,9 @@ namespace ExpressionEvaluatorTests
         {
             ExpressionEvaluator eval = new ExpressionEvaluator();
             eval.EvaluateSymbol += Eval_EvaluateSymbol;
-            Assert.AreEqual(4, eval.Evaluate("two + two").ToInteger());
-            Assert.AreEqual(17, eval.Evaluate("two + three * five").ToInteger());
-            Assert.AreEqual(-25, eval.Evaluate("(two + three) * -five").ToInteger());
+            Assert.IsTrue(eval.Evaluate("two + two") == 4);
+            Assert.IsTrue(eval.Evaluate("two + three * five") == 17);
+            Assert.IsTrue(eval.Evaluate("(two + three) * -five") == -25);
         }
 
         [TestMethod]
@@ -207,9 +207,9 @@ namespace ExpressionEvaluatorTests
             ExpressionEvaluator eval = new ExpressionEvaluator();
             eval.EvaluateFunction += Eval_EvaluateFunction;
             eval.EvaluateSymbol += Eval_EvaluateSymbol;
-            Assert.AreEqual(4, eval.Evaluate("add(two, two)").ToInteger());
-            Assert.AreEqual(17, eval.Evaluate("two + multiply(three, five)").ToInteger());
-            Assert.AreEqual(-25, eval.Evaluate("-multiply(add(two, three), five)").ToInteger());
+            Assert.IsTrue(eval.Evaluate("add(two, two)") == 4);
+            Assert.IsTrue(eval.Evaluate("two + multiply(three, five)") == 17);
+            Assert.IsTrue(eval.Evaluate("-multiply(add(two, three), five)") == -25);
         }
 
         [TestMethod]
@@ -274,8 +274,7 @@ namespace ExpressionEvaluatorTests
                         e.Parameters[0].Add(e.Parameters[1]);
                         e.Result.SetValue(e.Parameters[0]);
                     }
-                    else
-                        e.Status = FunctionStatus.WrongParameterCount;
+                    else e.Status = FunctionStatus.WrongParameterCount;
                     break;
                 case "MULTIPLY":
                     if (e.Parameters.Length == 2)
@@ -283,8 +282,7 @@ namespace ExpressionEvaluatorTests
                         e.Parameters[0].Multiply(e.Parameters[1]);
                         e.Result.SetValue(e.Parameters[0]);
                     }
-                    else
-                        e.Status = FunctionStatus.WrongParameterCount;
+                    else e.Status = FunctionStatus.WrongParameterCount;
                     break;
                 default:
                     e.Status = FunctionStatus.UndefinedFunction;

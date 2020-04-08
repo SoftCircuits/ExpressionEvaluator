@@ -207,39 +207,31 @@ namespace SoftCircuits.ExpressionEvaluator
         }
 
         /// <summary>
-        /// Adds the give value to this Variable.
+        /// Adds the given value to this Variable.
         /// </summary>
         /// <param name="operand">The value to be added.</param>
         public void Add(int operand)
         {
-            switch (GetNumericValue(out double value))
-            {
-                case NumericType.None:
-                    SetValue(operand);
-                    break;
-                case NumericType.Integer:
-                    SetValue((int)value + operand);
-                    break;
-                case NumericType.Double:
-                    SetValue(value + operand);
-                    break;
-            }
+            if (GetNumericValue(out double value) == NumericType.Double)
+                SetValue(value + operand);
+            else
+                SetValue((int)value + operand);
         }
 
         /// <summary>
-        /// Adds the give value to this Variable.
+        /// Adds the given value to this Variable.
         /// </summary>
         /// <param name="operand">The value to be added.</param>
         public void Add(double operand) => SetValue(ToDouble() + operand);
 
         /// <summary>
-        /// Adds the give value to this Variable.
+        /// Adds the given value to this Variable.
         /// </summary>
         /// <param name="operand">The value to be added.</param>
         public void Add(string operand) => CalculateStringOperand(operand, (val, op) => val + op);
 
         /// <summary>
-        /// Adds the give value to this Variable.
+        /// Adds the given value to this Variable.
         /// </summary>
         /// <param name="operand">The value to be added.</param>
         public void Add(Variable operand)
@@ -267,18 +259,10 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <param name="operand">The value to be subtracted.</param>
         public void Subtract(int operand)
         {
-            switch (GetNumericValue(out double value))
-            {
-                case NumericType.None:
-                    SetValue(-operand);
-                    break;
-                case NumericType.Integer:
-                    SetValue((int)value - operand);
-                    break;
-                case NumericType.Double:
-                    SetValue(value - operand);
-                    break;
-            }
+            if (GetNumericValue(out double value) == NumericType.Double)
+                SetValue(value - operand);
+            else
+                SetValue((int)value - operand);
         }
 
         /// <summary>
@@ -322,18 +306,10 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <param name="operand">The value by which to multiply.</param>
         public void Multiply(int operand)
         {
-            switch (GetNumericValue(out double value))
-            {
-                case NumericType.None:
-                    SetValue(0);
-                    break;
-                case NumericType.Integer:
-                    SetValue((int)value * operand);
-                    break;
-                case NumericType.Double:
-                    SetValue(value * operand);
-                    break;
-            }
+            if (GetNumericValue(out double value) == NumericType.Double)
+                SetValue(value * operand);
+            else
+                SetValue((int)value * operand);
         }
 
         /// <summary>
@@ -377,18 +353,10 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <param name="operand">The value by which to divide.</param>
         public void Divide(int operand)
         {
-            switch (GetNumericValue(out double value))
-            {
-                case NumericType.None:
-                    SetValue(0);
-                    break;
-                case NumericType.Integer:
-                    SetValue((operand == 0) ? 0 : (int)value / operand);
-                    break;
-                case NumericType.Double:
-                    SetValue((operand == 0) ? 0 : value / operand);
-                    break;
-            }
+            if (GetNumericValue(out double value) == NumericType.Double)
+                SetValue((operand == 0) ? 0 : value / operand);
+            else
+                SetValue((operand == 0) ? 0 : (int)value / operand);
         }
 
         /// <summary>
@@ -432,18 +400,10 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <param name="operand">The value by which to divide.</param>
         public void Modulus(int operand)
         {
-            switch (GetNumericValue(out double value))
-            {
-                case NumericType.None:
-                    SetValue(0);
-                    break;
-                case NumericType.Integer:
-                    SetValue((operand == 0) ? 0 : (int)value % operand);
-                    break;
-                case NumericType.Double:
-                    SetValue((operand == 0) ? 0 : value % operand);
-                    break;
-            }
+            if (GetNumericValue(out double value) == NumericType.Double)
+                SetValue((operand == 0) ? 0 : value % operand);
+            else
+                SetValue((operand == 0) ? 0 : (int)value % operand);
         }
 
         /// <summary>
@@ -519,17 +479,10 @@ namespace SoftCircuits.ExpressionEvaluator
                     DoubleValue = -DoubleValue;
                     break;
                 case VariableType.String:
-                    switch (GetNumericValue(StringValue, out double value))
-                    {
-                        case NumericType.None:
-                            break;
-                        case NumericType.Integer:
-                            SetValue(-(int)value);
-                            break;
-                        case NumericType.Double:
-                            SetValue(-value);
-                            break;
-                    }
+                    if (GetNumericValue(StringValue, out double value) == NumericType.Double)
+                        SetValue(-value);
+                    else
+                        SetValue(-(int)value);
                     break;
                 default:
                     Debug.Assert(false);
