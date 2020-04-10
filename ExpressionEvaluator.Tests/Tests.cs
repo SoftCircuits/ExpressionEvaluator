@@ -16,19 +16,21 @@ namespace ExpressionEvaluatorTests
         {
             ExpressionEvaluator eval = new ExpressionEvaluator();
 
-            // Numeric evaluation
+            // Operand evaluation
             Assert.AreEqual(5, eval.Evaluate("5"));
-            Assert.AreEqual(-5, eval.Evaluate("-5"));
+            Assert.AreEqual(-34, eval.Evaluate("-34"));
             Assert.AreEqual(12345.6, eval.Evaluate("12345.6"));
             Assert.AreEqual("abc", eval.Evaluate("\"abc\""));
+            Assert.AreEqual("abc", eval.Evaluate("'abc'"));
 
             // Operators
             Assert.AreEqual(5, eval.Evaluate("2 + 3"));
             Assert.AreEqual(-1, eval.Evaluate("2 - 3"));
             Assert.AreEqual(6, eval.Evaluate("2 * 3"));
             Assert.AreEqual(0, eval.Evaluate("2 / 3"));
-            Assert.AreEqual(0.667, Math.Round(eval.Evaluate("2.0 / 3").ToDouble(), 3));
+            Assert.AreEqual("0.666666666666667", eval.Evaluate("2.0 / 3"));
             Assert.AreEqual(2, eval.Evaluate("2 % 3"));
+            Assert.AreEqual(8, eval.Evaluate("2 ^ 3"));
             Assert.AreEqual(23, eval.Evaluate("2 & 3"));
 
             // Expressions
@@ -37,8 +39,8 @@ namespace ExpressionEvaluatorTests
             Assert.AreEqual(-25, eval.Evaluate("(2 + 3) * -5"));
             Assert.AreEqual(22.0, eval.Evaluate("(2 + 3) * (-5 + 14) / 2"));
             Assert.AreEqual(22.5, eval.Evaluate("(2.0 + 3) * (-5 + 14) / 2"));
-            Assert.AreEqual(22.0, eval.Evaluate("((2 + 3) * (-5 + 14)) / 2"));
-            Assert.AreEqual(22.5, eval.Evaluate("((2.0 + 3) * (-5 + 14)) / 2"));
+            Assert.AreEqual(20.0, eval.Evaluate("(2 + 3) * ((-5 + 14) / 2)"));
+            Assert.AreEqual(20.0, eval.Evaluate("(2.0 + 3) * ((-5 + 14) / 2)"));
 
             // Excess whitespace
             Assert.AreEqual(5, eval.Evaluate("     5    "));
@@ -55,7 +57,7 @@ namespace ExpressionEvaluatorTests
             Assert.AreEqual(123, eval.Evaluate("123"));
             Assert.AreEqual(123.0, eval.Evaluate("123"));
             Assert.AreEqual("123", eval.Evaluate("123"));
-            Assert.AreEqual(123, eval.Evaluate("\"123\""));
+            Assert.AreEqual(123, eval.Evaluate("'123'"));
             Assert.AreEqual(123.0, eval.Evaluate("'123'"));
             Assert.AreEqual("123", eval.Evaluate("'123'"));
             Assert.AreEqual(123, eval.Evaluate("123.0"));
@@ -81,6 +83,7 @@ namespace ExpressionEvaluatorTests
             Assert.IsTrue(eval.Evaluate("'abc' / 5") == 0);
             Assert.IsTrue(eval.Evaluate("'abc' % 5") == 0);
             Assert.IsTrue(eval.Evaluate("-'abc'") == 0);
+            Assert.IsTrue(eval.Evaluate("'abc' ^ 5") == 0);
             Assert.IsTrue(eval.Evaluate("'abc' & 5") == "abc5");
 
             Assert.IsTrue(eval.Evaluate("5 + 'abc'") == 5);
@@ -162,7 +165,17 @@ namespace ExpressionEvaluatorTests
             Assert.IsTrue((v % "abc") == 0);
             Assert.IsTrue((v % v2) == 32);
 
+            // Power
+            v2.SetValue(v2.ToDouble());
+            Assert.IsTrue((v ^ 3) == 1000000);
+            Assert.IsTrue((v ^ 2.5) == 100000);
+            Assert.IsTrue((v ^ "2") == 10000);
+            Assert.IsTrue((v ^ 0) == 1);
+            Assert.IsTrue((v ^ "abc") == 1);
+            Assert.IsTrue((v ^ v2) == 1E+68);
+
             // Concatenation
+            v2.SetValue(v2.ToInteger());
             Assert.IsTrue((v & 1) == "1001");
             Assert.IsTrue((v & 1.5) == 1001.5);
             Assert.IsTrue((v & "10") == "10010");

@@ -323,6 +323,30 @@ namespace SoftCircuits.ExpressionEvaluator
         public void Modulus(Variable value) => Calculate(value, Modulus);
 
         /// <summary>
+        /// Raises this Variable to the given power.
+        /// </summary>
+        /// <param name="value">The value by which to divide.</param>
+        public void Power(int value) => Calculate(value, Power);
+
+        /// <summary>
+        /// Raises this Variable to the given power.
+        /// </summary>
+        /// <param name="value">The value by which to divide.</param>
+        public void Power(double value) => Calculate(value, Power);
+
+        /// <summary>
+        /// Raises this Variable to the given power.
+        /// </summary>
+        /// <param name="value">The value by which to divide.</param>
+        public void Power(string value) => Calculate(value, Power);
+
+        /// <summary>
+        /// Raises this Variable to the given power.
+        /// </summary>
+        /// <param name="value">The value by which to divide.</param>
+        public void Power(Variable value) => Calculate(value, Power);
+
+        /// <summary>
         /// Concatenates two values together as strings.
         /// </summary>
         /// <param name="value">The value to be concatenated.</param>
@@ -450,6 +474,11 @@ namespace SoftCircuits.ExpressionEvaluator
         public static Variable operator %(Variable value1, string value2) => Calculate(value1, value2, Modulus);
         public static Variable operator %(Variable value1, Variable value2) => Calculate(value1, value2, Modulus);
 
+        public static Variable operator ^(Variable value1, int value2) => Calculate(value1, value2, Power);
+        public static Variable operator ^(Variable value1, double value2) => Calculate(value1, value2, Power);
+        public static Variable operator ^(Variable value1, string value2) => Calculate(value1, value2, Power);
+        public static Variable operator ^(Variable value1, Variable value2) => Calculate(value1, value2, Power);
+
         public static Variable operator &(Variable value1, int value2) => new Variable(value1.ToString() + value2.ToString());
         public static Variable operator &(Variable value1, double value2) => new Variable(value1.ToString() + value2.ToString());
         public static Variable operator &(Variable value1, string value2) => new Variable(value1.ToString() + value2);
@@ -473,6 +502,7 @@ namespace SoftCircuits.ExpressionEvaluator
         private static double Multiply(double value, double operand) => value * operand;
         private static double Divide(double value, double operand) => (operand == 0) ? 0 : value / operand;
         private static double Modulus(double value, double operand) => (operand == 0) ? 0 : value % operand;
+        private static double Power(double value, double operand) => Math.Pow(value, operand);
 
         /// <summary>
         /// Returns a negative value if <paramref name="value1"/> is less than <paramref name="value2"/>,
@@ -605,9 +635,9 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         private static Variable Calculate(Variable value1, int value2, Func<double, double, double> calculator)
         {
-            Variable v = new Variable(value1);
-            v.Calculate(value2, calculator);
-            return v;
+            Variable var = new Variable(value1);
+            var.Calculate(value2, calculator);
+            return var;
         }
 
         /// <summary>
@@ -616,9 +646,9 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         private static Variable Calculate(Variable value1, double value2, Func<double, double, double> calculator)
         {
-            Variable v = new Variable(value1);
-            v.Calculate(value2, calculator);
-            return v;
+            Variable var = new Variable(value1);
+            var.Calculate(value2, calculator);
+            return var;
         }
 
         /// <summary>
@@ -627,9 +657,9 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         private static Variable Calculate(Variable value1, string value2, Func<double, double, double> calculator)
         {
-            Variable v = new Variable(value1);
-            v.Calculate(value2, calculator);
-            return v;
+            Variable var = new Variable(value1);
+            var.Calculate(value2, calculator);
+            return var;
         }
 
         /// <summary>
@@ -638,9 +668,9 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         private static Variable Calculate(Variable value1, Variable value2, Func<double, double, double> calculator)
         {
-            Variable v = new Variable(value1);
-            v.Calculate(value2, calculator);
-            return v;
+            Variable var = new Variable(value1);
+            var.Calculate(value2, calculator);
+            return var;
         }
 
         /// <summary>
@@ -694,11 +724,8 @@ namespace SoftCircuits.ExpressionEvaluator
                 return NumericType.Integer;
             }
             // Attempt to parse double
-            if (double.TryParse(s, out double d))
-            {
-                value = d;
+            if (double.TryParse(s, out value))
                 return NumericType.Double;
-            }
             // Not numeric
             value = default;
             return NumericType.None;

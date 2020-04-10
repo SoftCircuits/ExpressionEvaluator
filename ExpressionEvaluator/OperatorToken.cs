@@ -17,19 +17,21 @@ namespace SoftCircuits.ExpressionEvaluator
         public const char OpSubtract = '-';
         public const char OpMultiply = '*';
         public const char OpDivide = '/';
-        public const char OpRemainder = '%';
+        public const char OpModulus = '%';
+        public const char OpPower = '^';
         public const char OpConcatenate = '&';
         public const char OpNegate = '\uffff';  // Represents unary minus
 
         public static readonly Dictionary<char, OperatorInfo> OperatorLookup = new Dictionary<char, OperatorInfo>
         {
-            [OpAdd] = new OperatorInfo(OpAdd, 1, EvalAdd),
-            [OpSubtract] = new OperatorInfo(OpSubtract, 1, EvalSubtract),
-            [OpMultiply] = new OperatorInfo(OpMultiply, 2, EvalMultiply),
-            [OpDivide] = new OperatorInfo(OpDivide, 2, EvalDivide),
-            [OpRemainder] = new OperatorInfo(OpRemainder, 2, EvalRemainder),
             [OpConcatenate] = new OperatorInfo(OpConcatenate, 1, EvalConcatenate),
-            [OpNegate] = new OperatorInfo(OpNegate, 10, EvalNegate),
+            [OpAdd] = new OperatorInfo(OpAdd, 2, EvalAdd),
+            [OpSubtract] = new OperatorInfo(OpSubtract, 2, EvalSubtract),
+            [OpModulus] = new OperatorInfo(OpModulus, 3, EvalModulus),
+            [OpMultiply] = new OperatorInfo(OpMultiply, 4, EvalMultiply),
+            [OpDivide] = new OperatorInfo(OpDivide, 4, EvalDivide),
+            [OpNegate] = new OperatorInfo(OpNegate, 5, EvalNegate),
+            [OpPower] = new OperatorInfo(OpPower, 6, EvalPower),
         };
 
         /// <summary>
@@ -44,7 +46,7 @@ namespace SoftCircuits.ExpressionEvaluator
 
         #endregion
 
-        private OperatorInfo Info;
+        private readonly OperatorInfo Info;
 
         public TokenType Type => TokenType.Operator;
 
@@ -112,12 +114,21 @@ namespace SoftCircuits.ExpressionEvaluator
             stack.Push(var1);
         }
 
-        private static void EvalRemainder(Stack<Variable> stack)
+        private static void EvalModulus(Stack<Variable> stack)
         {
             Debug.Assert(stack.Count >= 2);
             Variable var2 = stack.Pop();
             Variable var1 = stack.Pop();
             var1.Modulus(var2);
+            stack.Push(var1);
+        }
+
+        private static void EvalPower(Stack<Variable> stack)
+        {
+            Debug.Assert(stack.Count >= 2);
+            Variable var2 = stack.Pop();
+            Variable var1 = stack.Pop();
+            var1.Power(var2);
             stack.Push(var1);
         }
 
