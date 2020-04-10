@@ -8,13 +8,13 @@ Install-Package SoftCircuits.ExpressionEvaluator
 
 ## Overview
 
-ExpressionEvaluator is a .NET library that will evaluate a string expression. It also supports custom functions and symbols. Expression operands can include integers, doubles and strings. And operators include `+`, `-`, `*`, `/`, `%` and `&`.
+ExpressionEvaluator is a .NET library that will evaluate a string expression. It supports custom functions and symbols. Expression operands can include integers, doubles and strings. And operators include `+`, `-`, `*`, `/`, `%` (modulus), `^` (power) and `&` (concatenation).
 
 The library easily integrates with any .NET application. Custom functions and symbols are implemented using the `EvaluateFunction` and `EvaluateSymbol` events. These events are raised when ExpressionEvaluator encounters a function or symbol in the expression.
 
 ## Basic Example
 
-Use the `Evaluate()` method to evaluate a string expression and return the result. The result is of type `Variable`. A `Variable` can hold an integer, double or string value. You can use the `Type` property to determine its current type, or just call the `ToString()` method to convert the value to a string. The `Variable` class includes methods to set its value, convert its value to another type and perform various operations. It also overloads many operators to make it easier to work with.
+Use the `Evaluate()` method to evaluate a string expression and return the result.
 
 ```cs
 ExpressionEvaluator eval = new ExpressionEvaluator();
@@ -24,6 +24,8 @@ v = eval.Evaluate("2 + 2");        // Returns 4  (Integer)
 v = eval.Evaluate("2 + 3 * 5");    // Returns 17 (Integer)
 v = eval.Evaluate("(2 + 3) * 5");  // Returns 25 (Integer)
 ```
+
+As you can see in the example above, the `Evaluate()` method returns a `Variable`. A `Variable` can hold an integer, double or string value. You can use the `Type` property to determine its current type, or just call the `ToString()` method to convert the value to a string. The `Variable` class includes methods to set its value, convert its value to another type and perform various operations. It also overloads many operators to make it easier to work with.
 
 Expressions may also include string literals. Strings are any text enclosed in either double or single quotes. If the string contains two quotes together, they will be interpreted as a single quote character rather than the end of the string.
 
