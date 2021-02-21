@@ -1,10 +1,11 @@
-﻿// Copyright (c) 2019-2020 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2019-2021 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SoftCircuits.ExpressionEvaluator
 {
@@ -42,7 +43,11 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <param name="operator">The operator character.</param>
         /// <returns>Returns <c>true</c> if successful, or <c>false</c> if the operator is not a
         /// recognized operator.</returns>
+#if NETSTANDARD2_0
         public static bool GetOperatorInfo(char @operator, out OperatorInfo info) => OperatorLookup.TryGetValue(@operator, out info);
+#else
+        public static bool GetOperatorInfo(char @operator, [MaybeNullWhen(false)] out OperatorInfo info) => OperatorLookup.TryGetValue(@operator, out info);
+#endif
 
         #endregion
 
@@ -60,7 +65,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <param name="operator">The operator character.</param>
         public OperatorToken(char @operator)
         {
-            if (OperatorLookup.TryGetValue(@operator, out OperatorInfo info))
+            if (OperatorLookup.TryGetValue(@operator, out OperatorInfo? info))
                 Info = info;
             else
                 throw new Exception($"Invalid operator token : '{@operator}'.");
@@ -76,7 +81,7 @@ namespace SoftCircuits.ExpressionEvaluator
             Info = info;
         }
 
-        #region Evaluators
+#region Evaluators
 
         private static void EvalAdd(Stack<Variable> stack)
         {
@@ -149,7 +154,7 @@ namespace SoftCircuits.ExpressionEvaluator
             stack.Push(var1);
         }
 
-        #endregion
+#endregion
 
     }
 }

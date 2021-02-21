@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2020 Jonathan Wood (www.softcircuits.com)
+// Copyright (c) 2019-2021 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
@@ -28,7 +28,8 @@ namespace ExpressionEvaluatorTests
             Assert.AreEqual(-1, eval.Evaluate("2 - 3"));
             Assert.AreEqual(6, eval.Evaluate("2 * 3"));
             Assert.AreEqual(0, eval.Evaluate("2 / 3"));
-            Assert.AreEqual("0.666666666666667", eval.Evaluate("2.0 / 3"));
+            double result = Math.Round(eval.Evaluate("2.0 / 3").ToDouble(), 5);
+            Assert.AreEqual("0.66667", result.ToString());
             Assert.AreEqual(2, eval.Evaluate("2 % 3"));
             Assert.AreEqual(8, eval.Evaluate("2 ^ 3"));
             Assert.AreEqual(23, eval.Evaluate("2 & 3"));

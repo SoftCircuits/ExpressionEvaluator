@@ -1,22 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net5.0;netstandard2.0</TargetFrameworks>
+    <Nullable>annotations</Nullable>
+    <Nullable Condition="'$(TargetFramework)' == 'net5.0'">enable</Nullable>
+    <LangVersion>9.0</LangVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>SoftCircuits.ExpressionEvaluator</PackageId>
     <Authors>Jonathan Wood</Authors>
     <Company>SoftCircuits</Company>
-    <Copyright>Copyright © 2019-2020 SoftCircuits</Copyright>
+    <Copyright>Copyright © 2019-2021 SoftCircuits</Copyright>
     <PackageProjectUrl>https://github.com/SoftCircuits/ExpressionEvaluator</PackageProjectUrl>
     <RepositoryUrl>https://github.com/SoftCircuits/ExpressionEvaluator</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>expression evaluator expression-evaluator parser symbol function</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageReleaseNotes>Added power (^) operator; Added unit tests.</PackageReleaseNotes>
+    <PackageReleaseNotes>Now targeting either .NET Standard 2.0 or .NET 5.0; Added support for nullable reference types.</PackageReleaseNotes>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <Description>.NET library that will evaluate a string expression. Expressions can include integer, double and string operands. Operators can include "+", "-", "*", "/", "%", "^" and "&amp;". Supports custom functions and symbols. Provides easy integration with any application.</Description>
-    <Version>2.1.0</Version>
+    <Description>.NET library that will evaluate a string expression. Expressions can include integer, double and string operands. Operators can include "+", "-", "*", "/", "%", "^" and "&amp;". Supports custom functions and symbols. Provides easy integration with any application.
+
+Now targets either .NET Standard 2.0 or .NET 5.0 and supports nullable reference types.</Description>
+    <Version>3.0.0</Version>
     <PackageIcon>Logo_64x64.png</PackageIcon>
     <PackageIconUrl />
   </PropertyGroup>

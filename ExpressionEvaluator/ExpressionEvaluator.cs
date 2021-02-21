@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019-2020 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2019-2021 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 using SoftCircuits.Parsing.Helper;
@@ -36,12 +36,12 @@ namespace SoftCircuits.ExpressionEvaluator
         internal const string ErrWrongParamCount = "Wrong number of function parameters";
 
         // Event handers
-        public event EventHandler<SymbolEventArgs> EvaluateSymbol;
-        public event EventHandler<FunctionEventArgs> EvaluateFunction;
+        public event EventHandler<SymbolEventArgs>? EvaluateSymbol;
+        public event EventHandler<FunctionEventArgs>? EvaluateFunction;
 
-        private bool IsNumberChar(char c) => char.IsDigit(c) || c == '.';
-        private bool IsSymbolFirstChar(char c) => char.IsLetter(c) || c == '_';
-        private bool IsSymbolChar(char c) => char.IsLetterOrDigit(c) || c == '_';
+        private static bool IsNumberChar(char c) => char.IsDigit(c) || c == '.';
+        private static bool IsSymbolFirstChar(char c) => char.IsLetter(c) || c == '_';
+        private static bool IsSymbolChar(char c) => char.IsLetterOrDigit(c) || c == '_';
 
         //
         public ExpressionEvaluator()
@@ -112,7 +112,7 @@ namespace SoftCircuits.ExpressionEvaluator
                     // Track number of parentheses
                     parenCount--;
                 }
-                else if (OperatorToken.GetOperatorInfo(c, out OperatorInfo info))
+                else if (OperatorToken.GetOperatorInfo(c, out OperatorInfo? info))
                 {
                     // Need a bit of extra code to support unary operators
                     if (state == State.Operand)
@@ -258,12 +258,7 @@ namespace SoftCircuits.ExpressionEvaluator
         protected Variable ParseSymbol(string name, int pos)
         {
             // Create event args
-            SymbolEventArgs args = new SymbolEventArgs
-            {
-                Name = name,
-                Result = new Variable(),
-                Status = SymbolStatus.OK,
-            };
+            SymbolEventArgs args = new SymbolEventArgs(name, new Variable());
 
             if (EvaluateSymbol != null)
                 EvaluateSymbol(this, args);
@@ -286,13 +281,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <returns></returns>
         private Variable ParseFunction(ParsingHelper parser, string name, int pos)
         {
-            FunctionEventArgs args = new FunctionEventArgs
-            {
-                Name = name,
-                Parameters = ParseParameters(parser),
-                Result = new Variable(),
-                Status = FunctionStatus.OK,
-            };
+            FunctionEventArgs args = new FunctionEventArgs(name, ParseParameters(parser), new Variable());
 
             if (EvaluateFunction != null)
                 EvaluateFunction(this, args);
@@ -385,7 +374,7 @@ namespace SoftCircuits.ExpressionEvaluator
             {
                 // Adjust column and rethrow exception
                 ex.Index += start;
-                throw ex;
+                throw;
             }
         }
 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019-2020 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2019-2021 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
@@ -37,5 +37,20 @@ namespace SoftCircuits.ExpressionEvaluator
         /// Returns the resulting status.
         /// </summary>
         public FunctionStatus Status { get; set; }
+
+        /// <summary>
+        /// Constructs a new <see cref="FunctionEventArgs"/> instance.
+        /// </summary>
+        /// <param name="name">Name of the function.</param>
+        /// <param name="parameters">Parameters being passed to the function.</param>
+        /// <param name="result">Returns the function result.</param>
+        /// <param name="status">Returns the function status.</param>
+        public FunctionEventArgs(string name, Variable[] parameters, Variable result, FunctionStatus status = FunctionStatus.OK)
+        {
+            Name = name;
+            Parameters = parameters;
+            Result = result;
+            Status = status;
+        }
     }
 }

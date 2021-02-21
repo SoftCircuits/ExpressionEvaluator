@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019-2020 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2019-2021 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
@@ -31,5 +31,18 @@ namespace SoftCircuits.ExpressionEvaluator
         /// Returns the resulting status.
         /// </summary>
         public SymbolStatus Status { get; set; }
+
+        /// <summary>
+        /// Creates a new <see cref="SymbolEventArgs"/> instance.
+        /// </summary>
+        /// <param name="name">The symbol name.</param>
+        /// <param name="result">Returns the resulting value.</param>
+        /// <param name="status">Returns the resulting status.</param>
+        public SymbolEventArgs(string name, Variable result, SymbolStatus status = SymbolStatus.OK)
+        {
+            Name = name;
+            Result = result;
+            Status = status;
+        }
     }
 }

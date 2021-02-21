@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2019-2020 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2019-2021 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SoftCircuits.ExpressionEvaluator
 {
@@ -40,6 +41,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         public Variable()
         {
+            StringValue = string.Empty;
             SetValue(default(int));
         }
 
@@ -49,6 +51,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <param name="value">Specifies the initial value for this object.</param>
         public Variable(int value)
         {
+            StringValue = string.Empty;
             SetValue(value);
         }
 
@@ -58,6 +61,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <param name="value">Specifies the initial value for this object.</param>
         public Variable(double value)
         {
+            StringValue = string.Empty;
             SetValue(value);
         }
 
@@ -76,6 +80,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <param name="value">Specifies the initial value for this object.</param>
         public Variable(Variable value)
         {
+            StringValue = string.Empty;
             SetValue(value);
         }
 
@@ -107,6 +112,9 @@ namespace SoftCircuits.ExpressionEvaluator
         /// Sets this variable to the specified value.
         /// </summary>
         /// <param name="value">The value to assign to this Variable.</param>
+#if NET5_0
+        [MemberNotNull(nameof(StringValue))]
+#endif
         public void SetValue(string value)
         {
             Type = VariableType.String;
@@ -733,14 +741,14 @@ namespace SoftCircuits.ExpressionEvaluator
 
         #endregion
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as Variable);
         }
 
-        public bool Equals(Variable other)
+        public bool Equals(Variable? other)
         {
-            if (other == null)
+            if (other is null)
                 return false;
 
             switch (Type)
