@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019-2021 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2019-2022 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 using SoftCircuits.Parsing.Helper;
@@ -66,9 +66,9 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <returns>List of tokens in postfix order.</returns>
         private List<IToken> TokenizeExpression(string expression)
         {
-            ParsingHelper parser = new ParsingHelper(expression);
-            List<IToken> tokens = new List<IToken>();
-            Stack<IToken> stack = new Stack<IToken>();
+            ParsingHelper parser = new(expression);
+            List<IToken> tokens = new();
+            Stack<IToken> stack = new();
             State state = State.None;
             int parenCount = 0;
             IToken token;
@@ -223,7 +223,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         /// <param name="parser">Current parsing helper object.</param>
         /// <returns>The extracted number token string.</returns>
-        private Variable ParseNumber(ParsingHelper parser)
+        private static Variable ParseNumber(ParsingHelper parser)
         {
             Debug.Assert(IsNumberChar(parser.Peek()));
 
@@ -245,8 +245,8 @@ namespace SoftCircuits.ExpressionEvaluator
                 throw new ExpressionException(ErrInvalidOperand, parser.Index - 1);
 
             if (hasDecimal)
-                return new Variable(double.Parse(token));
-            return new Variable(int.Parse(token));
+                return new(double.Parse(token));
+            return new(int.Parse(token));
         }
 
         /// <summary>
@@ -258,7 +258,7 @@ namespace SoftCircuits.ExpressionEvaluator
         protected Variable ParseSymbol(string name, int pos)
         {
             // Create event args
-            SymbolEventArgs args = new SymbolEventArgs(name, new Variable());
+            SymbolEventArgs args = new(name, new Variable());
 
             if (EvaluateSymbol != null)
                 EvaluateSymbol(this, args);
@@ -281,7 +281,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <returns></returns>
         private Variable ParseFunction(ParsingHelper parser, string name, int pos)
         {
-            FunctionEventArgs args = new FunctionEventArgs(name, ParseParameters(parser), new Variable());
+            FunctionEventArgs args = new(name, ParseParameters(parser), new Variable());
 
             if (EvaluateFunction != null)
                 EvaluateFunction(this, args);
@@ -305,7 +305,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <returns>A list of parameter values.</returns>
         private Variable[] ParseParameters(ParsingHelper parser)
         {
-            List<Variable> parameters = new List<Variable>();
+            List<Variable> parameters = new();
 
             // Move past open parenthesis
             parser++;
@@ -349,7 +349,9 @@ namespace SoftCircuits.ExpressionEvaluator
             if (parser.Peek() != ')')
                 throw new ExpressionException(ErrClosingParenExpected, parser.Index);
             // Move past closing parenthesis
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
             parser++;
+#pragma warning restore IDE0059 // Unnecessary assignment of a value
             // Return parameter list
             return parameters.ToArray();
         }
@@ -384,9 +386,9 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         /// <param name="tokens">List of tokens to evaluate.</param>
         /// <returns>The result of all tokens.</returns>
-        private Variable EvaluateTokens(List<IToken> tokens)
+        private static Variable EvaluateTokens(List<IToken> tokens)
         {
-            Stack<Variable> stack = new Stack<Variable>();
+            Stack<Variable> stack = new();
 
             Debug.Assert(tokens.All(t => t.Type == TokenType.Operand || t.Type == TokenType.Operator));
             foreach (IToken token in tokens)

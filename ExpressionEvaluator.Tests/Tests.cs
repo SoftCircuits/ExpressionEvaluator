@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2021 Jonathan Wood (www.softcircuits.com)
+// Copyright (c) 2019-2022 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
@@ -14,7 +14,7 @@ namespace ExpressionEvaluatorTests
         [TestMethod]
         public void TestBasic()
         {
-            ExpressionEvaluator eval = new ExpressionEvaluator();
+            ExpressionEvaluator eval = new();
 
             // Operand evaluation
             Assert.AreEqual(5, eval.Evaluate("5"));
@@ -53,7 +53,7 @@ namespace ExpressionEvaluatorTests
         [TestMethod]
         public void TestStrings()
         {
-            ExpressionEvaluator eval = new ExpressionEvaluator();
+            ExpressionEvaluator eval = new();
 
             Assert.AreEqual(123, eval.Evaluate("123"));
             Assert.AreEqual(123.0, eval.Evaluate("123"));
@@ -98,7 +98,7 @@ namespace ExpressionEvaluatorTests
         [TestMethod]
         public void TestVariableConversions()
         {
-            Variable v = new Variable(12345.6);
+            Variable v = new(12345.6);
 
             // Explicit conversions
             Assert.AreEqual(12346, v.ToInteger());
@@ -126,8 +126,8 @@ namespace ExpressionEvaluatorTests
         [TestMethod]
         public void TestVariableOperators()
         {
-            Variable v = new Variable(100);
-            Variable v2 = new Variable(34);
+            Variable v = new(100);
+            Variable v2 = new(34);
 
             // Addition
             Assert.IsTrue((v + 1) == 101);
@@ -190,7 +190,7 @@ namespace ExpressionEvaluatorTests
         [TestMethod]
         public void TestVariableComparisonOperators()
         {
-            Variable v = new Variable(100);
+            Variable v = new(100);
 
             // Equals
             Assert.IsTrue(v == v.ToInteger());
@@ -289,105 +289,6 @@ namespace ExpressionEvaluatorTests
             // Comparisons do not evaluate non-numbers as 0
             v.SetValue("abc");
             Assert.IsFalse(v == 0);
-        }
-
-        [TestMethod]
-        public void TestSymbols()
-        {
-            ExpressionEvaluator eval = new ExpressionEvaluator();
-            eval.EvaluateSymbol += Eval_EvaluateSymbol;
-            Assert.IsTrue(eval.Evaluate("two + two") == 4);
-            Assert.IsTrue(eval.Evaluate("TWO + THREE * FIVE") == 17);
-            Assert.IsTrue(eval.Evaluate("(two + three) * -five") == -25);
-        }
-
-        [TestMethod]
-        public void TestFunctions()
-        {
-            ExpressionEvaluator eval = new ExpressionEvaluator();
-            eval.EvaluateFunction += Eval_EvaluateFunction;
-            eval.EvaluateSymbol += Eval_EvaluateSymbol;
-            Assert.IsTrue(eval.Evaluate("add(two, two)") == 4);
-            Assert.IsTrue(eval.Evaluate("TWO + multiply(THREE, FIVE)") == 17);
-            Assert.IsTrue(eval.Evaluate("-multiply(add(two, three), five)") == -25);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ExpressionException))]
-        public void TestSyntaxErrorException()
-        {
-            ExpressionEvaluator eval = new ExpressionEvaluator();
-            eval.Evaluate("2 + ");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ExpressionException))]
-        public void TestUndefinedSymbolException()
-        {
-            ExpressionEvaluator eval = new ExpressionEvaluator();
-            eval.Evaluate("two + two");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ExpressionException))]
-        public void TestUndefinedFunctionException()
-        {
-            ExpressionEvaluator eval = new ExpressionEvaluator();
-            eval.Evaluate("f() + 2");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ExpressionException))]
-        public void TestWrongParameterCountException()
-        {
-            ExpressionEvaluator eval = new ExpressionEvaluator();
-            eval.EvaluateFunction += Eval_EvaluateFunction;
-            eval.Evaluate("add(1, 2, 3)");
-        }
-
-        private void Eval_EvaluateSymbol(object sender, SymbolEventArgs e)
-        {
-            switch (e.Name.ToUpper())
-            {
-                case "TWO":
-                    e.Result.SetValue(2);
-                    break;
-                case "THREE":
-                    e.Result.SetValue(3);
-                    break;
-                case "FIVE":
-                    e.Result.SetValue(5);
-                    break;
-                default:
-                    e.Status = SymbolStatus.UndefinedSymbol;
-                    break;
-            }
-        }
-
-        private void Eval_EvaluateFunction(object sender, FunctionEventArgs e)
-        {
-            switch (e.Name.ToUpper())
-            {
-                case "ADD":
-                    if (e.Parameters.Length == 2)
-                    {
-                        e.Parameters[0].Add(e.Parameters[1]);
-                        e.Result.SetValue(e.Parameters[0]);
-                    }
-                    else e.Status = FunctionStatus.WrongParameterCount;
-                    break;
-                case "MULTIPLY":
-                    if (e.Parameters.Length == 2)
-                    {
-                        e.Parameters[0].Multiply(e.Parameters[1]);
-                        e.Result.SetValue(e.Parameters[0]);
-                    }
-                    else e.Status = FunctionStatus.WrongParameterCount;
-                    break;
-                default:
-                    e.Status = FunctionStatus.UndefinedFunction;
-                    break;
-            }
         }
     }
 }

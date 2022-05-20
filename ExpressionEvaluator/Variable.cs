@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019-2021 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2019-2022 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
@@ -487,14 +487,14 @@ namespace SoftCircuits.ExpressionEvaluator
         public static Variable operator ^(Variable value1, string value2) => Calculate(value1, value2, Power);
         public static Variable operator ^(Variable value1, Variable value2) => Calculate(value1, value2, Power);
 
-        public static Variable operator &(Variable value1, int value2) => new Variable(value1.ToString() + value2.ToString());
-        public static Variable operator &(Variable value1, double value2) => new Variable(value1.ToString() + value2.ToString());
-        public static Variable operator &(Variable value1, string value2) => new Variable(value1.ToString() + value2);
-        public static Variable operator &(Variable value1, Variable value2) => new Variable(value1.ToString() + value2.ToString());
+        public static Variable operator &(Variable value1, int value2) => new(value1.ToString() + value2.ToString());
+        public static Variable operator &(Variable value1, double value2) => new(value1.ToString() + value2.ToString());
+        public static Variable operator &(Variable value1, string value2) => new(value1.ToString() + value2);
+        public static Variable operator &(Variable value1, Variable value2) => new(value1.ToString() + value2.ToString());
 
         public static Variable operator -(Variable value)
         {
-            Variable v = new Variable(value);
+            Variable v = new(value);
             v.Negate();
             return v;
         }
@@ -643,7 +643,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         private static Variable Calculate(Variable value1, int value2, Func<double, double, double> calculator)
         {
-            Variable var = new Variable(value1);
+            Variable var = new(value1);
             var.Calculate(value2, calculator);
             return var;
         }
@@ -654,7 +654,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         private static Variable Calculate(Variable value1, double value2, Func<double, double, double> calculator)
         {
-            Variable var = new Variable(value1);
+            Variable var = new(value1);
             var.Calculate(value2, calculator);
             return var;
         }
@@ -665,7 +665,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         private static Variable Calculate(Variable value1, string value2, Func<double, double, double> calculator)
         {
-            Variable var = new Variable(value1);
+            Variable var = new(value1);
             var.Calculate(value2, calculator);
             return var;
         }
@@ -676,7 +676,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         private static Variable Calculate(Variable value1, Variable value2, Func<double, double, double> calculator)
         {
-            Variable var = new Variable(value1);
+            Variable var = new(value1);
             var.Calculate(value2, calculator);
             return var;
         }

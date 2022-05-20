@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019-2021 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2019-2022 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
@@ -23,7 +23,7 @@ namespace SoftCircuits.ExpressionEvaluator
         public const char OpConcatenate = '&';
         public const char OpNegate = '\uffff';  // Represents unary minus
 
-        public static readonly Dictionary<char, OperatorInfo> OperatorLookup = new Dictionary<char, OperatorInfo>
+        public static readonly Dictionary<char, OperatorInfo> OperatorLookup = new()
         {
             [OpConcatenate] = new OperatorInfo(OpConcatenate, 1, EvalConcatenate),
             [OpAdd] = new OperatorInfo(OpAdd, 2, EvalAdd),
