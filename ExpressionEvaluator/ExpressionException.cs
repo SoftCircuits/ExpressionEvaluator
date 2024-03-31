@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019-2022 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2019-2024 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
@@ -6,6 +6,9 @@ using System;
 
 namespace SoftCircuits.ExpressionEvaluator
 {
+    /// <summary>
+    /// Exception thrown when an error is encountered within the expression.
+    /// </summary>
     public class ExpressionException : Exception
     {
         /// <summary>
@@ -17,7 +20,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// Constructs an ExpressionException instance.
         /// </summary>
         /// <param name="message">Message that describes this exception</param>
-        /// <param name="position">Position within expression where exception occurred</param>
+        /// <param name="index">Position within expression where exception occurred</param>
         public ExpressionException(string message, int index)
             : base(message)
         {
@@ -25,7 +28,7 @@ namespace SoftCircuits.ExpressionEvaluator
         }
 
         /// <summary>
-        /// Constructs an ExpressionException instance.
+        /// Constructs an <see cref="ExpressionException"/> instance.
         /// </summary>
         /// <param name="format"></param>
         /// <param name="argument"></param>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019-2022 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2019-2024 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 using SoftCircuits.Parsing.Helper;
@@ -14,12 +14,26 @@ namespace SoftCircuits.ExpressionEvaluator
     /// </summary>
     public class ExpressionEvaluator
     {
-        // Token state enums
+        /// <summary>
+        /// Token state enums.
+        /// </summary>
         protected enum State
         {
+            /// <summary>
+            /// No state.
+            /// </summary>
             None = 0,
+            /// <summary>
+            /// Operand.
+            /// </summary>
             Operand = 1,
+            /// <summary>
+            /// Operator.
+            /// </summary>
             Operator = 2,
+            /// <summary>
+            /// Unary operator.
+            /// </summary>
             UnaryOperator = 3
         }
 
@@ -35,15 +49,22 @@ namespace SoftCircuits.ExpressionEvaluator
         internal const string ErrClosingParenExpected = "Closing parenthesis expected";
         internal const string ErrWrongParamCount = "Wrong number of function parameters";
 
-        // Event handers
+        /// <summary>
+        /// Event handler for evaluating symbols.
+        /// </summary>
         public event EventHandler<SymbolEventArgs>? EvaluateSymbol;
+        /// <summary>
+        /// Event handler for evaluating functions.
+        /// </summary>
         public event EventHandler<FunctionEventArgs>? EvaluateFunction;
 
         private static bool IsNumberChar(char c) => char.IsDigit(c) || c == '.';
         private static bool IsSymbolFirstChar(char c) => char.IsLetter(c) || c == '_';
         private static bool IsSymbolChar(char c) => char.IsLetterOrDigit(c) || c == '_';
 
-        //
+        /// <summary>
+        /// Creates a new <see cref="ExpressionEvaluator"/> instance.
+        /// </summary>
         public ExpressionEvaluator()
         {
         }

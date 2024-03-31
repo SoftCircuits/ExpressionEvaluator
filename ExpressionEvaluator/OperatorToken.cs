@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019-2022 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2019-2024 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
@@ -41,12 +41,13 @@ namespace SoftCircuits.ExpressionEvaluator
         /// operator.
         /// </summary>
         /// <param name="operator">The operator character.</param>
+        /// <param name="info">Returns the information for the specified operator, if successful.</param>
         /// <returns>Returns <c>true</c> if successful, or <c>false</c> if the operator is not a
         /// recognized operator.</returns>
 #if NETSTANDARD2_0
         public static bool GetOperatorInfo(char @operator, out OperatorInfo info) => OperatorLookup.TryGetValue(@operator, out info);
 #else
-        public static bool GetOperatorInfo(char @operator, [MaybeNullWhen(false)] out OperatorInfo info) => OperatorLookup.TryGetValue(@operator, out info);
+        public static bool GetOperatorInfo(char @operator, [NotNullWhen(true)] out OperatorInfo? info) => OperatorLookup.TryGetValue(@operator, out info);
 #endif
 
         #endregion
@@ -81,7 +82,7 @@ namespace SoftCircuits.ExpressionEvaluator
             Info = info;
         }
 
-#region Evaluators
+        #region Evaluators
 
         private static void EvalAdd(Stack<Variable> stack)
         {
@@ -154,7 +155,7 @@ namespace SoftCircuits.ExpressionEvaluator
             stack.Push(var1);
         }
 
-#endregion
+        #endregion
 
     }
 }

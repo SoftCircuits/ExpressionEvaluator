@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019-2022 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2019-2024 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
@@ -13,8 +13,11 @@ namespace SoftCircuits.ExpressionEvaluator
     /// </summary>
     public enum VariableType
     {
+        /// <inheritdoc/>
         Integer,
+        /// <inheritdoc/>
         Double,
+        /// <inheritdoc/>
         String,
     };
 
@@ -112,7 +115,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// Sets this variable to the specified value.
         /// </summary>
         /// <param name="value">The value to assign to this Variable.</param>
-#if NET5_0
+#if !NETSTANDARD2_0
         [MemberNotNull(nameof(StringValue))]
 #endif
         public void SetValue(string value)
@@ -415,14 +418,17 @@ namespace SoftCircuits.ExpressionEvaluator
 
         #region Conversion operators
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public static implicit operator int(Variable v) => v.ToInteger();
         public static implicit operator double(Variable v) => v.ToDouble();
         public static implicit operator string(Variable v) => v.ToString();
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
         #endregion
 
         #region Comparison operators
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public static bool operator ==(Variable value1, int value2) => Compare(value1, value2) == 0;
         public static bool operator ==(Variable value1, double value2) => Compare(value1, value2) == 0;
         public static bool operator ==(Variable value1, string value2) => Compare(value1, value2) == 0;
@@ -452,11 +458,13 @@ namespace SoftCircuits.ExpressionEvaluator
         public static bool operator >=(Variable value1, double value2) => Compare(value1, value2) >= 0;
         public static bool operator >=(Variable value1, string value2) => Compare(value1, value2) >= 0;
         public static bool operator >=(Variable value1, Variable value2) => Compare(value1, value2) >= 0;
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
         #endregion
 
         #region Operation operators
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public static Variable operator +(Variable value1, int value2) => Calculate(value1, value2, Add);
         public static Variable operator +(Variable value1, double value2) => Calculate(value1, value2, Add);
         public static Variable operator +(Variable value1, string value2) => Calculate(value1, value2, Add);
@@ -498,6 +506,7 @@ namespace SoftCircuits.ExpressionEvaluator
             v.Negate();
             return v;
         }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
         #endregion
 
@@ -741,11 +750,13 @@ namespace SoftCircuits.ExpressionEvaluator
 
         #endregion
 
+        /// <inheritdoc/>
         public override bool Equals(object? obj)
         {
             return Equals(obj as Variable);
         }
 
+        /// <inheritdoc/>
         public bool Equals(Variable? other)
         {
             if (other is null)
@@ -770,6 +781,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// </summary>
         public override int GetHashCode()
         {
+#if NETSTANDARD2_0
             var hashCode = 1055843540;
             hashCode = hashCode * -1521134295 + Type.GetHashCode();
             switch (Type)
@@ -788,6 +800,15 @@ namespace SoftCircuits.ExpressionEvaluator
                     break;
             }
             return hashCode;
+#else
+            return Type switch
+            {
+                VariableType.Integer => HashCode.Combine(Type, IntegerValue),
+                VariableType.Double => HashCode.Combine(Type, DoubleValue),
+                VariableType.String => HashCode.Combine(Type, StringValue),
+                _ => HashCode.Combine(Type)
+            };
+#endif
         }
     }
 }

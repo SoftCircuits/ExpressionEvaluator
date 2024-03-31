@@ -1,27 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net5.0;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net7.0;net6.0;netstandard2.0</TargetFrameworks>
     <Nullable>annotations</Nullable>
-    <Nullable Condition="'$(TargetFramework)' == 'net5.0'">enable</Nullable>
+    <Nullable Condition="'$(TargetFramework)' != 'netstandard2.0'">enable</Nullable>
     <LangVersion>9.0</LangVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>SoftCircuits.ExpressionEvaluator</PackageId>
     <Authors>Jonathan Wood</Authors>
     <Company>SoftCircuits</Company>
-    <Copyright>Copyright © 2019-2022 SoftCircuits</Copyright>
+    <Copyright>Copyright © 2019-2024 SoftCircuits</Copyright>
     <PackageProjectUrl>https://github.com/SoftCircuits/ExpressionEvaluator</PackageProjectUrl>
     <RepositoryUrl>https://github.com/SoftCircuits/ExpressionEvaluator</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>expression evaluator expression-evaluator parser symbol function</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageReleaseNotes>Added support for .NET 6.0; minor code tweaks.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added missing XML documentation file; Added direct support for .NET 7 and 8; Removed direct support for now deprecated .NET 5.0; minor code tweaks.</PackageReleaseNotes>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Description>.NET library that will evaluate a string expression. Expressions can include integer, double and string operands. Operators can include "+", "-", "*", "/", "%", "^" and "&amp;". Supports custom functions and symbols. Provides easy integration with any application.
 
 Now targets either .NET Standard 2.0 or .NET 5.0 and supports nullable reference types.</Description>
-    <Version>3.0.1</Version>
+    <Version>3.1.1</Version>
     <PackageIcon>Logo_64x64.png</PackageIcon>
     <PackageIconUrl />
     <PackageReadmeFile>README.md</PackageReadmeFile>
