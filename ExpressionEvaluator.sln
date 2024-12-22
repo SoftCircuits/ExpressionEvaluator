@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29025.244
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35521.163 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpressionEvaluator", "ExpressionEvaluator\ExpressionEvaluator.csproj", "{BD0E105D-2BEB-403F-950C-5BF5D90D5CBD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExpressionEvaluator.Tests", "ExpressionEvaluator.Tests\ExpressionEvaluator.Tests.csproj", "{7346D13D-7AF1-4802-9017-8EF0327C0F28}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionEvaluatorTests", "ExpressionEvaluatorTests\ExpressionEvaluatorTests.csproj", "{149DBEEB-F5FB-425B-8353-2C5D0EAB126F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{BD0E105D-2BEB-403F-950C-5BF5D90D5CBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD0E105D-2BEB-403F-950C-5BF5D90D5CBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD0E105D-2BEB-403F-950C-5BF5D90D5CBD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7346D13D-7AF1-4802-9017-8EF0327C0F28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7346D13D-7AF1-4802-9017-8EF0327C0F28}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7346D13D-7AF1-4802-9017-8EF0327C0F28}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7346D13D-7AF1-4802-9017-8EF0327C0F28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{149DBEEB-F5FB-425B-8353-2C5D0EAB126F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{149DBEEB-F5FB-425B-8353-2C5D0EAB126F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{149DBEEB-F5FB-425B-8353-2C5D0EAB126F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{149DBEEB-F5FB-425B-8353-2C5D0EAB126F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

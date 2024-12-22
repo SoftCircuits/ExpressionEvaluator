@@ -2,9 +2,7 @@
 // Licensed under the MIT license.
 //
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SoftCircuits.ExpressionEvaluator;
-using System;
 
 namespace ExpressionEvaluatorTests
 {
@@ -78,21 +76,21 @@ namespace ExpressionEvaluatorTests
             Assert.AreEqual("22", eval.Evaluate("\"2\" & \"2\""));
             Assert.AreEqual("2.52.6", eval.Evaluate("2.5 & 2.6"));
 
-            Assert.IsTrue(eval.Evaluate("'abc' + 5") == 5);
-            Assert.IsTrue(eval.Evaluate("'abc' - 5") == -5);
-            Assert.IsTrue(eval.Evaluate("'abc' * 5") == 0);
-            Assert.IsTrue(eval.Evaluate("'abc' / 5") == 0);
-            Assert.IsTrue(eval.Evaluate("'abc' % 5") == 0);
-            Assert.IsTrue(eval.Evaluate("-'abc'") == 0);
-            Assert.IsTrue(eval.Evaluate("'abc' ^ 5") == 0);
-            Assert.IsTrue(eval.Evaluate("'abc' & 5") == "abc5");
+            Assert.AreEqual(5, eval.Evaluate("'abc' + 5"));
+            Assert.AreEqual(-5, eval.Evaluate("'abc' - 5"));
+            Assert.AreEqual(0, eval.Evaluate("'abc' * 5"));
+            Assert.AreEqual(0, eval.Evaluate("'abc' / 5"));
+            Assert.AreEqual(0, eval.Evaluate("'abc' % 5"));
+            Assert.AreEqual(0, eval.Evaluate("-'abc'"));
+            Assert.AreEqual(0, eval.Evaluate("'abc' ^ 5"));
+            Assert.AreEqual("abc5", eval.Evaluate("'abc' & 5"));
 
-            Assert.IsTrue(eval.Evaluate("5 + 'abc'") == 5);
-            Assert.IsTrue(eval.Evaluate("5 - 'abc'") == 5);
-            Assert.IsTrue(eval.Evaluate("5 * 'abc'") == 0);
-            Assert.IsTrue(eval.Evaluate("5 / 'abc'") == 0);
-            Assert.IsTrue(eval.Evaluate("5 % 'abc'") == 0);
-            Assert.IsTrue(eval.Evaluate("5 & 'abc'") == "5abc");
+            Assert.AreEqual(5, eval.Evaluate("5 + 'abc'"));
+            Assert.AreEqual(5, eval.Evaluate("5 - 'abc'"));
+            Assert.AreEqual(0, eval.Evaluate("5 * 'abc'"));
+            Assert.AreEqual(0, eval.Evaluate("5 / 'abc'"));
+            Assert.AreEqual(0, eval.Evaluate("5 % 'abc'"));
+            Assert.AreEqual("5abc", eval.Evaluate("5 & 'abc'"));
         }
 
         [TestMethod]
@@ -130,61 +128,61 @@ namespace ExpressionEvaluatorTests
             Variable v2 = new(34);
 
             // Addition
-            Assert.IsTrue((v + 1) == 101);
-            Assert.IsTrue((v + 1.5) == 101.5);
-            Assert.IsTrue((v + "10") == 110);
-            Assert.IsTrue((v + "abc") == 100);
-            Assert.IsTrue((v + v2) == 134);
+            Assert.AreEqual(101, v + 1);
+            Assert.AreEqual(101.5, v + 1.5);
+            Assert.AreEqual(110, v + "10");
+            Assert.AreEqual(100, v + "abc");
+            Assert.AreEqual(134, v + v2);
 
             // Subtraction
-            Assert.IsTrue((v - 1) == 99);
-            Assert.IsTrue((v - 1.5) == 98.5);
-            Assert.IsTrue((v - "10") == 90);
-            Assert.IsTrue((v - "abc") == 100);
-            Assert.IsTrue((v - v2) == 66);
+            Assert.AreEqual(99, v - 1);
+            Assert.AreEqual(98.5, v - 1.5);
+            Assert.AreEqual(90, v - "10");
+            Assert.AreEqual(100, v - "abc");
+            Assert.AreEqual(66, v - v2);
 
             // Multiplication
-            Assert.IsTrue((v * 1) == 100);
-            Assert.IsTrue((v * 1.5) == 150);
-            Assert.IsTrue((v * "10") == 1000);
-            Assert.IsTrue((v * "abc") == 0);
-            Assert.IsTrue((v * v2) == 3400);
+            Assert.AreEqual(100, v * 1);
+            Assert.AreEqual(150, v * 1.5);
+            Assert.AreEqual(1000, v * "10");
+            Assert.AreEqual(0, v * "abc");
+            Assert.AreEqual(3400, v * v2);
 
             // Division
-            Assert.IsTrue((v / 1) == 100);
-            Assert.IsTrue((v / 1.5) == 66.66666666666667);
-            Assert.IsTrue((v / "10") == 10);
-            Assert.IsTrue((v / 0) == 0);
-            Assert.IsTrue((v / "abc") == 0);
-            Assert.IsTrue((v / v2) == 2);
+            Assert.AreEqual(100, v / 1);
+            Assert.AreEqual(66.66666666666667, v / 1.5);
+            Assert.AreEqual(10, v / "10");
+            Assert.AreEqual(0, v / 0);
+            Assert.AreEqual(0, v / "abc");
+            Assert.AreEqual(2, v / v2);
 
             // Modulus
-            Assert.IsTrue((v % 1) == 0);
-            Assert.IsTrue((v % 1.5) == 1);
-            Assert.IsTrue((v % "10") == 0);
-            Assert.IsTrue((v % 0) == 0);
-            Assert.IsTrue((v % "abc") == 0);
-            Assert.IsTrue((v % v2) == 32);
+            Assert.AreEqual(0, v % 1);
+            Assert.AreEqual(1, v % 1.5);
+            Assert.AreEqual(0, v % "10");
+            Assert.AreEqual(0, v % 0);
+            Assert.AreEqual(0, v % "abc");
+            Assert.AreEqual(32, v % v2);
 
             // Power
             v2.SetValue(v2.ToDouble());
-            Assert.IsTrue((v ^ 3) == 1000000);
-            Assert.IsTrue((v ^ 2.5) == 100000);
-            Assert.IsTrue((v ^ "2") == 10000);
-            Assert.IsTrue((v ^ 0) == 1);
-            Assert.IsTrue((v ^ "abc") == 1);
-            Assert.IsTrue((v ^ v2) == 1E+68);
+            Assert.AreEqual(1000000, v ^ 3);
+            Assert.AreEqual(100000, v ^ 2.5);
+            Assert.AreEqual(10000, v ^ "2");
+            Assert.AreEqual(1, v ^ 0);
+            Assert.AreEqual(1, v ^ "abc");
+            Assert.AreEqual(1E+68, v ^ v2);
 
             // Concatenation
             v2.SetValue(v2.ToInteger());
-            Assert.IsTrue((v & 1) == "1001");
-            Assert.IsTrue((v & 1.5) == 1001.5);
-            Assert.IsTrue((v & "10") == "10010");
-            Assert.IsTrue((v & "abc") == "100abc");
-            Assert.IsTrue((v & v2) == 10034);
+            Assert.AreEqual("1001", v & 1);
+            Assert.AreEqual(1001.5, v & 1.5);
+            Assert.AreEqual("10010", v & "10");
+            Assert.AreEqual("100abc", v & "abc");
+            Assert.AreEqual(10034, v & v2);
 
             // Negation
-            Assert.IsTrue((-v) == -100);
+            Assert.AreEqual(-100, -v);
         }
 
         [TestMethod]
@@ -193,28 +191,28 @@ namespace ExpressionEvaluatorTests
             Variable v = new(100);
 
             // Equals
-            Assert.IsTrue(v == v.ToInteger());
-            Assert.IsTrue(v == v.ToDouble());
-            Assert.IsTrue(v == v.ToString());
-            Assert.IsTrue(v == 100);
-            Assert.IsTrue(v == 100.0);
-            Assert.IsTrue(v == "100");
-            Assert.IsFalse(v == 101);
-            Assert.IsFalse(v == 101.1);
-            Assert.IsFalse(v == "101");
-            Assert.IsFalse(v == "abc");  // Compare as strings
+            Assert.AreEqual(v.ToInteger(), v);
+            Assert.AreEqual(v.ToDouble(), v);
+            Assert.AreEqual(v.ToString(), v);
+            Assert.AreEqual(100, v);
+            Assert.AreEqual(100.0, v);
+            Assert.AreEqual("100", v);
+            Assert.AreNotEqual(101, v);
+            Assert.AreNotEqual(101.1, v);
+            Assert.AreNotEqual("101", v);
+            Assert.AreNotEqual("abc", v);  // Compare as strings
 
             // Not equals
-            Assert.IsFalse(v != v.ToInteger());
-            Assert.IsFalse(v != v.ToDouble());
-            Assert.IsFalse(v != v.ToString());
-            Assert.IsTrue(v != 101);
-            Assert.IsTrue(v != 101.1);
-            Assert.IsTrue(v != "101");
-            Assert.IsFalse(v != 100);
-            Assert.IsFalse(v != 100.0);
-            Assert.IsFalse(v != "100");
-            Assert.IsTrue(v != "abc");  // Compare as strings
+            Assert.AreEqual(v.ToInteger(), v);
+            Assert.AreEqual(v.ToDouble(), v);
+            Assert.AreEqual(v.ToString(), v);
+            Assert.AreNotEqual(101, v);
+            Assert.AreNotEqual(101.1, v);
+            Assert.AreNotEqual("101", v);
+            Assert.AreEqual(100, v);
+            Assert.AreEqual(100.0, v);
+            Assert.AreEqual("100", v);
+            Assert.AreNotEqual("abc", v);  // Compare as strings
 
             // Less than
             Assert.IsFalse(v < v.ToInteger());
@@ -267,10 +265,10 @@ namespace ExpressionEvaluatorTests
             v.SetValue("abc");
 
             // String comparisons
-            Assert.IsTrue(v == "abc");
-            Assert.IsFalse(v == "def");
-            Assert.IsTrue(v != "def");
-            Assert.IsFalse(v != "abc");
+            Assert.AreEqual("abc", v);
+            Assert.AreNotEqual("def", v);
+            Assert.AreNotEqual("def", v);
+            Assert.AreEqual("abc", v);
             Assert.IsTrue(v < "def");
             Assert.IsFalse(v < "101");
             Assert.IsTrue(v <= "abc");

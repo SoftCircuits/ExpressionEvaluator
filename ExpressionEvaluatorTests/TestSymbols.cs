@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 //
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SoftCircuits.ExpressionEvaluator;
 
 namespace ExpressionEvaluatorTests
@@ -15,9 +14,9 @@ namespace ExpressionEvaluatorTests
         {
             ExpressionEvaluator eval = new();
             eval.EvaluateSymbol += Eval_EvaluateSymbol;
-            Assert.IsTrue(eval.Evaluate("two + two") == 4);
-            Assert.IsTrue(eval.Evaluate("TWO + THREE * FIVE") == 17);
-            Assert.IsTrue(eval.Evaluate("(two + three) * -five") == -25);
+            Assert.AreEqual(4, eval.Evaluate("two + two"));
+            Assert.AreEqual(17, eval.Evaluate("TWO + THREE * FIVE"));
+            Assert.AreEqual(-25, eval.Evaluate("(two + three) * -five"));
         }
 
         [TestMethod]
@@ -26,12 +25,12 @@ namespace ExpressionEvaluatorTests
             ExpressionEvaluator eval = new();
             eval.EvaluateFunction += Eval_EvaluateFunction;
             eval.EvaluateSymbol += Eval_EvaluateSymbol;
-            Assert.IsTrue(eval.Evaluate("add(two, two)") == 4);
-            Assert.IsTrue(eval.Evaluate("TWO + multiply(THREE, FIVE)") == 17);
-            Assert.IsTrue(eval.Evaluate("-multiply(add(two, three), five)") == -25);
+            Assert.AreEqual(4, eval.Evaluate("add(two, two)"));
+            Assert.AreEqual(17, eval.Evaluate("TWO + multiply(THREE, FIVE)"));
+            Assert.AreEqual(-25, eval.Evaluate("-multiply(add(two, three), five)"));
         }
 
-        private void Eval_EvaluateSymbol(object sender, SymbolEventArgs e)
+        private void Eval_EvaluateSymbol(object? sender, SymbolEventArgs e)
         {
             switch (e.Name.ToUpper())
             {
@@ -50,7 +49,7 @@ namespace ExpressionEvaluatorTests
             }
         }
 
-        private void Eval_EvaluateFunction(object sender, FunctionEventArgs e)
+        private void Eval_EvaluateFunction(object? sender, FunctionEventArgs e)
         {
             switch (e.Name.ToUpper())
             {

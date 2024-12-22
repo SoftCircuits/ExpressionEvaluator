@@ -4,16 +4,11 @@
 
 namespace SoftCircuits.ExpressionEvaluator
 {
-    internal class OperandToken : IToken
+    internal class OperandToken(Variable value) : IToken
     {
-        public Variable Value { get; private set; }
+        public Variable Value { get; private set; } = value;
 
         public TokenType Type => TokenType.Operand;
         public int Precedence => 0;
-
-        public OperandToken(Variable value)
-        {
-            Value = value;
-        }
     }
 }

@@ -88,7 +88,7 @@ namespace SoftCircuits.ExpressionEvaluator
         private List<IToken> TokenizeExpression(string expression)
         {
             ParsingHelper parser = new(expression);
-            List<IToken> tokens = new();
+            List<IToken> tokens = [];
             Stack<IToken> stack = new();
             State state = State.None;
             int parenCount = 0;
@@ -326,7 +326,7 @@ namespace SoftCircuits.ExpressionEvaluator
         /// <returns>A list of parameter values.</returns>
         private Variable[] ParseParameters(ParsingHelper parser)
         {
-            List<Variable> parameters = new();
+            List<Variable> parameters = [];
 
             // Move past open parenthesis
             parser++;
@@ -374,7 +374,7 @@ namespace SoftCircuits.ExpressionEvaluator
             parser++;
 #pragma warning restore IDE0059 // Unnecessary assignment of a value
             // Return parameter list
-            return parameters.ToArray();
+            return [.. parameters];
         }
 
         /// <summary>

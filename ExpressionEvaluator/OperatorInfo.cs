@@ -7,17 +7,10 @@ using System.Collections.Generic;
 
 namespace SoftCircuits.ExpressionEvaluator
 {
-    internal class OperatorInfo
+    internal class OperatorInfo(char @operator, int precedence, Action<Stack<Variable>> evaluator)
     {
-        public char Operator { get; set; }
-        public int Precedence { get; set; }
-        public Action<Stack<Variable>> Evaluator { get; set; }
-
-        public OperatorInfo(char @operator, int precedence, Action<Stack<Variable>> evaluator)
-        {
-            Operator = @operator;
-            Precedence = precedence;
-            Evaluator = evaluator;
-        }
+        public char Operator { get; set; } = @operator;
+        public int Precedence { get; set; } = precedence;
+        public Action<Stack<Variable>> Evaluator { get; set; } = evaluator;
     }
 }

@@ -4,9 +4,11 @@
 
 namespace SoftCircuits.ExpressionEvaluator
 {
-    internal interface IToken
+    internal enum TokenType
     {
-        TokenType Type { get; }
-        int Precedence { get; }
+        Operand,
+        Operator,
+        LeftParenthesis,
+        RightParenthesis,   // Not used
     }
 }

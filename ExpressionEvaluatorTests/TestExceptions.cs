@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 //
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SoftCircuits.ExpressionEvaluator;
 
 namespace ExpressionEvaluatorTests
@@ -11,39 +10,47 @@ namespace ExpressionEvaluatorTests
     public class TestExceptions
     {
         [TestMethod]
-        [ExpectedException(typeof(ExpressionException))]
         public void TestSyntaxErrorException()
         {
-            ExpressionEvaluator eval = new();
-            eval.Evaluate("2 + ");
+            Assert.ThrowsException<ExpressionException>(() =>
+            {
+                ExpressionEvaluator eval = new();
+                eval.Evaluate("2 + ");
+            });
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExpressionException))]
         public void TestUndefinedSymbolException()
         {
-            ExpressionEvaluator eval = new();
-            eval.Evaluate("two + two");
+            Assert.ThrowsException<ExpressionException>(() =>
+            {
+                ExpressionEvaluator eval = new();
+                eval.Evaluate("two + two");
+            });
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExpressionException))]
         public void TestUndefinedFunctionException()
         {
-            ExpressionEvaluator eval = new();
-            eval.Evaluate("2 + f()");
+            Assert.ThrowsException<ExpressionException>(() =>
+            {
+                ExpressionEvaluator eval = new();
+                eval.Evaluate("2 + f()");
+            });
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ExpressionException))]
         public void TestWrongParameterCountException()
         {
-            ExpressionEvaluator eval = new();
-            eval.EvaluateFunction += Eval_EvaluateFunction;
-            eval.Evaluate("add(1, 2, 3)");
+            Assert.ThrowsException<ExpressionException>(() =>
+            {
+                ExpressionEvaluator eval = new();
+                eval.EvaluateFunction += Eval_EvaluateFunction;
+                eval.Evaluate("add(1, 2, 3)");
+            });
         }
 
-        private void Eval_EvaluateFunction(object sender, FunctionEventArgs e)
+        private void Eval_EvaluateFunction(object? sender, FunctionEventArgs e)
         {
             switch (e.Name.ToUpper())
             {
