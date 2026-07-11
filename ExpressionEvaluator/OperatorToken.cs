@@ -1,7 +1,8 @@
-﻿// Copyright (c) 2019-2024 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2023-2026 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
+using SoftCircuits.ExpressionEvaluator.Enums;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

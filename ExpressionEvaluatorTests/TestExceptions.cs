@@ -1,8 +1,9 @@
-﻿// Copyright (c) 2019-2024 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2023-2026 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
 using SoftCircuits.ExpressionEvaluator;
+using SoftCircuits.ExpressionEvaluator.Enums;
 
 namespace ExpressionEvaluatorTests
 {
@@ -12,7 +13,7 @@ namespace ExpressionEvaluatorTests
         [TestMethod]
         public void TestSyntaxErrorException()
         {
-            Assert.ThrowsException<ExpressionException>(() =>
+            Assert.Throws<ExpressionException>(() =>
             {
                 ExpressionEvaluator eval = new();
                 eval.Evaluate("2 + ");
@@ -22,7 +23,7 @@ namespace ExpressionEvaluatorTests
         [TestMethod]
         public void TestUndefinedSymbolException()
         {
-            Assert.ThrowsException<ExpressionException>(() =>
+            Assert.Throws<ExpressionException>(() =>
             {
                 ExpressionEvaluator eval = new();
                 eval.Evaluate("two + two");
@@ -32,7 +33,7 @@ namespace ExpressionEvaluatorTests
         [TestMethod]
         public void TestUndefinedFunctionException()
         {
-            Assert.ThrowsException<ExpressionException>(() =>
+            Assert.Throws<ExpressionException>(() =>
             {
                 ExpressionEvaluator eval = new();
                 eval.Evaluate("2 + f()");
@@ -42,7 +43,7 @@ namespace ExpressionEvaluatorTests
         [TestMethod]
         public void TestWrongParameterCountException()
         {
-            Assert.ThrowsException<ExpressionException>(() =>
+            Assert.Throws<ExpressionException>(() =>
             {
                 ExpressionEvaluator eval = new();
                 eval.EvaluateFunction += Eval_EvaluateFunction;
